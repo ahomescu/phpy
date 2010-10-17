@@ -379,7 +379,7 @@
 <xs:complexType name="List_assignment">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="List_elements_list_optionals" type="List_elements_list_optionals" nillable="false"/>
+<xs:element name="List_element_list" type="List_element_list" nillable="false"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -394,7 +394,7 @@
 <xs:complexType name="Nested_list_elements">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="List_element_list_optionals" type="List_element_list_optionals" nillable="false"/>
+<xs:element name="List_element_list" type="List_element_list" nillable="false"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -627,7 +627,7 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="List_element_list_optionals">
+<xs:complexType name="List_element_list">
 <xs:sequence>
 <xs:group ref="List_element_optional" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
@@ -654,12 +654,6 @@
 <xs:complexType name="Variable_name_list">
 <xs:sequence>
 <xs:group ref="Variable_name" minOccurs="0" maxOccurs="unbounded"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="List_elements_list_optionals">
-<xs:sequence>
-<xs:group ref="List_element_optional" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

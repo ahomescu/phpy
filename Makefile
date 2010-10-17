@@ -11,5 +11,6 @@ $(PARSER_PY): phc-2.0.xsd
 .PHONY: clean
 
 clean:
-	rm -rf $(PARSER_PY)
+	rm -rf $(PARSER_PY) $(PARSER_NAME).pyc
+
 
