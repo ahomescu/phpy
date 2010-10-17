@@ -1,0 +1,766 @@
+<?xml version="1.0"?>
+
+<xs:schema 
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.phpcompiler.org/phc-1.1"
+	targetNamespace="http://www.phpcompiler.org/phc-1.1"
+	elementFormDefault="qualified">
+
+<!-- root element -->
+
+<xs:element name="PHP_script" type="PHP_script"/>
+
+<!-- built in support for attributes on nodes -->
+
+<xs:complexType name="attrs">
+    <xs:sequence>
+        <xs:element name="attr" minOccurs="0" maxOccurs="unbounded"
+            form="unqualified">
+                <xs:complexType mixed="true">
+                        <!-- TODO: add types for attrs -->
+                        <xs:sequence>
+                                <xs:any minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:attribute name="key" type="xs:string"
+                            form="unqualified"/>
+                </xs:complexType>
+        </xs:element>
+    </xs:sequence>
+</xs:complexType>
+
+<!-- Top-level statement -->
+
+<xs:complexType name="PHP_script">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Statement">
+<xs:choice>
+<xs:element name="Class_def" type="Class_def" nillable="false"/>
+<xs:element name="Interface_def" type="Interface_def" nillable="false"/>
+<xs:element name="Method" type="Method" nillable="false"/>
+<xs:element name="Return" type="Return" nillable="false"/>
+<xs:element name="Static_declaration" type="Static_declaration" nillable="false"/>
+<xs:element name="Global" type="Global" nillable="false"/>
+<xs:element name="Try" type="Try" nillable="false"/>
+<xs:element name="Throw" type="Throw" nillable="false"/>
+<xs:element name="Eval_expr" type="Eval_expr" nillable="false"/>
+<xs:element name="If" type="If" nillable="false"/>
+<xs:element name="While" type="While" nillable="false"/>
+<xs:element name="Do" type="Do" nillable="false"/>
+<xs:element name="For" type="For" nillable="false"/>
+<xs:element name="Foreach" type="Foreach" nillable="false"/>
+<xs:element name="Switch" type="Switch" nillable="false"/>
+<xs:element name="Break" type="Break" nillable="false"/>
+<xs:element name="Continue" type="Continue" nillable="false"/>
+<xs:element name="Declare" type="Declare" nillable="false"/>
+<xs:element name="Nop" type="Nop" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<!-- Classes and methods -->
+
+<xs:complexType name="Class_def">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Class_mod" type="Class_mod" nillable="false"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="true"/>
+<xs:element name="INTERFACE_NAME_list" type="INTERFACE_NAME_list" nillable="true"/>
+<xs:element name="Member_list" type="Member_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Class_mod">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Interface_def">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME" nillable="false"/>
+<xs:element name="INTERFACE_NAME_list" type="INTERFACE_NAME_list" nillable="true"/>
+<xs:element name="Member_list" type="Member_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Member">
+<xs:choice>
+<xs:element name="Method" type="Method" nillable="false"/>
+<xs:element name="Attribute" type="Attribute" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Method">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Signature" type="Signature" nillable="false"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Signature">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Method_mod" type="Method_mod" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="METHOD_NAME" type="METHOD_NAME" nillable="false"/>
+<xs:element name="Formal_parameter_list" type="Formal_parameter_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Method_mod">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Formal_parameter">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Type" type="Type" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:group ref="Expr_optional"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Type">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Attribute">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Attr_mod" type="Attr_mod" nillable="false"/>
+<xs:element name="Name_with_default_list" type="Name_with_default_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Attr_mod">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Name_with_default">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="true"/>
+<xs:group ref="Expr_optional"/>
+</xs:sequence>
+</xs:complexType>
+
+<!-- Statements -->
+
+<xs:complexType name="If">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="While">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Do">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="For">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+<xs:group ref="Expr_optional"/>
+<xs:group ref="Expr_optional"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Foreach">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:element name="Variable" type="Variable" nillable="true"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Switch">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:element name="Switch_case_list" type="Switch_case_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Switch_case">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Break">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Continue">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Return">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Static_declaration">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Name_with_default_list" type="Name_with_default_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Global">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Variable_name_list" type="Variable_name_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Declare">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Directive_list" type="Directive_list" nillable="true"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Directive">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="DIRECTIVE_NAME" type="DIRECTIVE_NAME" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Try">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+<xs:element name="Catch_list" type="Catch_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Catch">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:element name="Statement_list" type="Statement_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Throw">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Eval_expr">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Nop">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<!-- Expressions -->
+
+<xs:group name="Expr">
+<xs:choice>
+<xs:element name="Assignment" type="Assignment" nillable="false"/>
+<xs:element name="Cast" type="Cast" nillable="false"/>
+<xs:element name="Unary_op" type="Unary_op" nillable="false"/>
+<xs:element name="Bin_op" type="Bin_op" nillable="false"/>
+<xs:element name="Constant" type="Constant" nillable="false"/>
+<xs:element name="Instanceof" type="Instanceof" nillable="false"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="Pre_op" type="Pre_op" nillable="false"/>
+<xs:element name="Method_invocation" type="Method_invocation" nillable="false"/>
+<xs:element name="New" type="New" nillable="false"/>
+<xs:element name="Op_assignment" type="Op_assignment" nillable="false"/>
+<xs:element name="List_assignment" type="List_assignment" nillable="false"/>
+<xs:element name="Post_op" type="Post_op" nillable="false"/>
+<xs:element name="Array" type="Array" nillable="false"/>
+<xs:element name="Conditional_expr" type="Conditional_expr" nillable="false"/>
+<xs:element name="Ignore_errors" nillable="false"/>
+<xs:group ref="Literal"/>
+</xs:choice>
+</xs:group>
+
+<xs:group name="Literal">
+<xs:choice>
+<xs:element name="INT" type="INT" nillable="false"/>
+<xs:element name="REAL" type="REAL" nillable="false"/>
+<xs:element name="STRING" type="STRING" nillable="false"/>
+<xs:element name="BOOL" type="BOOL" nillable="false"/>
+<xs:element name="NULL" type="NULL" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Assignment">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Op_assignment">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="OP" type="OP" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="List_assignment">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="List_elements_list_optionals" type="List_elements_list_optionals" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="List_element">
+<xs:choice>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="Nested_list_elements" type="Nested_list_elements" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Nested_list_elements">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="List_element_list_optionals" type="List_element_list_optionals" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Cast">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="CAST" type="CAST" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Unary_op">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="OP" type="OP" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Bin_op">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:element name="OP" type="OP" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Conditional_expr">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:group ref="Expr"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Ignore_errors">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Constant">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="true"/>
+<xs:element name="CONSTANT_NAME" type="CONSTANT_NAME" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Instanceof">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+<xs:group ref="Class_name"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Variable">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Target_optional"/>
+<xs:group ref="Variable_name"/>
+<xs:element name="Expr_list" type="Expr_list" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Variable_name">
+<xs:choice>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:element name="Reflection" type="Reflection" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Reflection">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Target">
+<xs:choice>
+<xs:group ref="Expr"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Pre_op">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="OP" type="OP" nillable="false"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Post_op">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="OP" type="OP" nillable="false"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Array">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="Array_elem_list" type="Array_elem_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Array_elem">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Expr_optional"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Method_invocation">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Target_optional"/>
+<xs:group ref="Method_name"/>
+<xs:element name="Actual_parameter_list" type="Actual_parameter_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Method_name">
+<xs:choice>
+<xs:element name="METHOD_NAME" type="METHOD_NAME" nillable="false"/>
+<xs:element name="Reflection" type="Reflection" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="Actual_parameter">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:group ref="Expr"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="New">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:group ref="Class_name"/>
+<xs:element name="Actual_parameter_list" type="Actual_parameter_list" nillable="true"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:group name="Class_name">
+<xs:choice>
+<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
+<xs:element name="Reflection" type="Reflection" nillable="false"/>
+</xs:choice>
+</xs:group>
+
+<!-- Helpers -->
+
+<xs:group name="Expr_optional">
+<xs:choice>
+<xs:element name="Expr" nillable="true"/> <!-- should only have xs:nill=true in instances -->
+<xs:group ref="Expr"/>
+</xs:choice>
+</xs:group>
+
+<xs:group name="List_element_optional">
+<xs:choice>
+<xs:element name="List_element" nillable="true"/> <!-- should only have xs:nill=true in instances -->
+<xs:group ref="List_element"/>
+</xs:choice>
+</xs:group>
+
+<xs:group name="Target_optional">
+<xs:choice>
+<xs:element name="Target" nillable="true"/> <!-- should only have xs:nill=true in instances -->
+<xs:group ref="Target"/>
+</xs:choice>
+</xs:group>
+
+<xs:complexType name="INTERFACE_NAME_list">
+<xs:sequence>
+<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Member_list">
+<xs:sequence>
+<xs:group ref="Member" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Statement_list">
+<xs:sequence>
+<xs:group ref="Statement" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Formal_parameter_list">
+<xs:sequence>
+<xs:element name="Formal_parameter" type="Formal_parameter" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Name_with_default_list">
+<xs:sequence>
+<xs:element name="Name_with_default" type="Name_with_default" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Switch_case_list">
+<xs:sequence>
+<xs:element name="Switch_case" type="Switch_case" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Directive_list">
+<xs:sequence>
+<xs:element name="Directive" type="Directive" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Catch_list">
+<xs:sequence>
+<xs:element name="Catch" type="Catch" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="List_element_list_optionals">
+<xs:sequence>
+<xs:group ref="List_element_optional" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Expr_list">
+<xs:sequence>
+<xs:group ref="Expr_optional" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Array_elem_list">
+<xs:sequence>
+<xs:element name="Array_elem" type="Array_elem" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Actual_parameter_list">
+<xs:sequence>
+<xs:element name="Actual_parameter" type="Actual_parameter" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Variable_name_list">
+<xs:sequence>
+<xs:group ref="Variable_name" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="List_elements_list_optionals">
+<xs:sequence>
+<xs:group ref="List_element_optional" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<!-- complex types for terminal symbols -->
+
+<xs:complexType name="encoded_string">
+	<xs:simpleContent>
+		<xs:extension base="xs:string">
+			<xs:attribute name="encoding" type="xs:string" default="none"/>
+		</xs:extension>
+	</xs:simpleContent>
+</xs:complexType>
+
+<xs:complexType name="INTERFACE_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CLASS_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="METHOD_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="VARIABLE_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="DIRECTIVE_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="INT">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="REAL">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="STRING">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="BOOL">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="NULL">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CAST">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="OP">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CONSTANT_NAME">
+<xs:sequence>
+<xs:element name="attrs" type="attrs" form="unqualified"/>
+<xs:element name="value" type="encoded_string" form="unqualified"/>
+</xs:sequence>
+</xs:complexType>
+
+</xs:schema>
