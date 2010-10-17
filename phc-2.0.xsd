@@ -1,3 +1,4 @@
+<!-- Adapted from original phc 1.0 schema at http://www.phpcompiler.org/phc-1.0 -->
 <?xml version="1.0"?>
 
 <xs:schema 
