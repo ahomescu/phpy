@@ -1,6 +1,6 @@
-<!-- Adapted from original phc 1.0 schema at http://www.phpcompiler.org/phc-1.0 -->
 <?xml version="1.0"?>
 
+<!-- Adapted from original phc 1.0 schema at http://www.phpcompiler.org/phc-1.0 -->
 <xs:schema 
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns="http://www.phpcompiler.org/phc-1.1"
@@ -134,7 +134,7 @@
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:element name="Type" type="Type" nillable="false"/>
 <xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:element name="Name_with_default" type="Name_with_default" nillable="false"/>
 <xs:group ref="Expr_optional"/>
 </xs:sequence>
 </xs:complexType>
