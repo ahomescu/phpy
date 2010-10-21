@@ -459,7 +459,7 @@
 <xs:complexType name="Variable">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:group ref="Target_optional"/>
+<xs:element name="Target" type="Target" nillable="true"/>
 <xs:group ref="Variable_name"/>
 <xs:element name="Expr_list" type="Expr_list" nillable="false"/>
 </xs:sequence>
@@ -479,12 +479,12 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:group name="Target">
+<xs:complexType name="Target">
 <xs:choice>
 <xs:group ref="Expr"/>
 <xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
 </xs:choice>
-</xs:group>
+</xs:complexType>
 
 <xs:complexType name="Pre_op">
 <xs:sequence>
@@ -521,7 +521,7 @@
 <xs:complexType name="Method_invocation">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:group ref="Target_optional"/>
+<xs:element name="Target" type="Target" nillable="true"/>
 <xs:group ref="Method_name"/>
 <xs:element name="Actual_parameter_list" type="Actual_parameter_list" nillable="true"/>
 </xs:sequence>
@@ -570,13 +570,6 @@
 <xs:choice>
 <xs:element name="List_element" nillable="true"/> <!-- should only have xs:nill=true in instances -->
 <xs:group ref="List_element"/>
-</xs:choice>
-</xs:group>
-
-<xs:group name="Target_optional">
-<xs:choice>
-<xs:element name="Target" nillable="true"/> <!-- should only have xs:nill=true in instances -->
-<xs:group ref="Target"/>
 </xs:choice>
 </xs:group>
 
