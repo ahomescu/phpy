@@ -18,15 +18,27 @@
         <xs:element name="attr" minOccurs="0" maxOccurs="unbounded"
             form="unqualified">
                 <xs:complexType mixed="true">
-                        <!-- TODO: add types for attrs -->
-                        <xs:sequence>
-                                <xs:any minOccurs="0" maxOccurs="unbounded"/>
-                        </xs:sequence>
-                        <xs:attribute name="key" type="xs:string"
+                    <xs:choice>
+                        <xs:element name="string" type="encoded_string"
+                            form="unqualified"/>
+                        <xs:element name="integer" type="xs:integer"
+                            form="unqualified"/>
+                        <xs:element name="bool" type="xs:boolean"
+                            form="unqualified"/>
+                        <xs:element name="string_list" type="attr_string_list"
+                            form="unqualified"/>
+                    </xs:choice>
+                    <xs:attribute name="key" type="xs:string"
                             form="unqualified"/>
                 </xs:complexType>
         </xs:element>
     </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="attr_string_list">
+<xs:sequence>
+<xs:element name="string" type="encoded_string" form="unqualified" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
 </xs:complexType>
 
 <!-- Top-level statement -->
