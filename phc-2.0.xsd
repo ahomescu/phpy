@@ -135,7 +135,6 @@
 <xs:element name="Type" type="Type" nillable="false"/>
 <xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
 <xs:element name="Name_with_default" type="Name_with_default" nillable="false"/>
-<xs:group ref="Expr_optional"/>
 </xs:sequence>
 </xs:complexType>
 
