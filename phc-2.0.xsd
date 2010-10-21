@@ -366,7 +366,7 @@
 <xs:element name="REAL" type="REAL" nillable="false"/>
 <xs:element name="STRING" type="STRING" nillable="false"/>
 <xs:element name="BOOL" type="BOOL" nillable="false"/>
-<xs:element name="NULL" type="NULL" nillable="false"/>
+<xs:element name="NIL" type="NIL" nillable="false"/>
 </xs:choice>
 </xs:group>
 
@@ -742,7 +742,7 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="NULL">
+<xs:complexType name="NIL">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 </xs:sequence>
