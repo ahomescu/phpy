@@ -593,7 +593,7 @@
 
 <xs:complexType name="INTERFACE_NAME_list">
 <xs:sequence>
-<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -611,31 +611,31 @@
 
 <xs:complexType name="Formal_parameter_list">
 <xs:sequence>
-<xs:element name="Formal_parameter" type="Formal_parameter" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Formal_parameter" type="Formal_parameter" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Name_with_default_list">
 <xs:sequence>
-<xs:element name="Name_with_default" type="Name_with_default" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Name_with_default" type="Name_with_default" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Switch_case_list">
 <xs:sequence>
-<xs:element name="Switch_case" type="Switch_case" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Switch_case" type="Switch_case" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Directive_list">
 <xs:sequence>
-<xs:element name="Directive" type="Directive" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Directive" type="Directive" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Catch_list">
 <xs:sequence>
-<xs:element name="Catch" type="Catch" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Catch" type="Catch" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -653,13 +653,13 @@
 
 <xs:complexType name="Array_elem_list">
 <xs:sequence>
-<xs:element name="Array_elem" type="Array_elem" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Array_elem" type="Array_elem" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Actual_parameter_list">
 <xs:sequence>
-<xs:element name="Actual_parameter" type="Actual_parameter" nillable="false" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="Actual_parameter" type="Actual_parameter" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 
