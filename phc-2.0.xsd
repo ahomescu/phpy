@@ -17,20 +17,20 @@
     <xs:sequence>
         <xs:element name="attr" minOccurs="0" maxOccurs="unbounded"
             form="unqualified">
-                <xs:complexType mixed="true">
-                    <xs:choice>
-                        <xs:element name="string" type="encoded_string"
-                            form="unqualified"/>
-                        <xs:element name="integer" type="xs:integer"
-                            form="unqualified"/>
-                        <xs:element name="bool" type="xs:boolean"
-                            form="unqualified"/>
-                        <xs:element name="string_list" type="attr_string_list"
-                            form="unqualified"/>
-                    </xs:choice>
-                    <xs:attribute name="key" type="xs:string"
-                            form="unqualified"/>
-                </xs:complexType>
+            <xs:complexType mixed="true">
+                <xs:choice>
+                    <xs:element name="string" type="encoded_string"
+                        form="unqualified"/>
+                    <xs:element name="integer" type="xs:integer"
+                        form="unqualified"/>
+                    <xs:element name="bool" type="xs:boolean"
+                        form="unqualified"/>
+                    <xs:element name="string_list" type="attr_string_list"
+                        form="unqualified"/>
+                </xs:choice>
+                <xs:attribute name="key" type="xs:string"
+                    form="unqualified"/>
+            </xs:complexType>
         </xs:element>
     </xs:sequence>
 </xs:complexType>
@@ -52,25 +52,25 @@
 
 <xs:group name="Statement">
 <xs:choice>
-<xs:element name="Class_def" type="Class_def" nillable="false"/>
-<xs:element name="Interface_def" type="Interface_def" nillable="false"/>
-<xs:element name="Method" type="Method" nillable="false"/>
-<xs:element name="Return" type="Return" nillable="false"/>
-<xs:element name="Static_declaration" type="Static_declaration" nillable="false"/>
-<xs:element name="Global" type="Global" nillable="false"/>
-<xs:element name="Try" type="Try" nillable="false"/>
-<xs:element name="Throw" type="Throw" nillable="false"/>
-<xs:element name="Eval_expr" type="Eval_expr" nillable="false"/>
-<xs:element name="If" type="If" nillable="false"/>
-<xs:element name="While" type="While" nillable="false"/>
-<xs:element name="Do" type="Do" nillable="false"/>
-<xs:element name="For" type="For" nillable="false"/>
-<xs:element name="Foreach" type="Foreach" nillable="false"/>
-<xs:element name="Switch" type="Switch" nillable="false"/>
-<xs:element name="Break" type="Break" nillable="false"/>
-<xs:element name="Continue" type="Continue" nillable="false"/>
-<xs:element name="Declare" type="Declare" nillable="false"/>
-<xs:element name="Nop" type="Nop" nillable="false"/>
+<xs:element name="Class_def" type="Class_def"/>
+<xs:element name="Interface_def" type="Interface_def"/>
+<xs:element name="Method" type="Method"/>
+<xs:element name="Return" type="Return"/>
+<xs:element name="Static_declaration" type="Static_declaration"/>
+<xs:element name="Global" type="Global"/>
+<xs:element name="Try" type="Try"/>
+<xs:element name="Throw" type="Throw"/>
+<xs:element name="Eval_expr" type="Eval_expr"/>
+<xs:element name="If" type="If"/>
+<xs:element name="While" type="While"/>
+<xs:element name="Do" type="Do"/>
+<xs:element name="For" type="For"/>
+<xs:element name="Foreach" type="Foreach"/>
+<xs:element name="Switch" type="Switch"/>
+<xs:element name="Break" type="Break"/>
+<xs:element name="Continue" type="Continue"/>
+<xs:element name="Declare" type="Declare"/>
+<xs:element name="Nop" type="Nop"/>
 </xs:choice>
 </xs:group>
 
@@ -79,9 +79,9 @@
 <xs:complexType name="Class_def">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Class_mod" type="Class_mod" nillable="false"/>
-<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
-<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="true"/>
+<xs:element name="Class_mod" type="Class_mod"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME"/>
 <xs:element name="INTERFACE_NAME_list" type="INTERFACE_NAME_list" nillable="true"/>
 <xs:element name="Member_list" type="Member_list" nillable="true"/>
 </xs:sequence>
@@ -90,15 +90,15 @@
 <xs:complexType name="Class_mod">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Interface_def">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME" nillable="false"/>
+<xs:element name="INTERFACE_NAME" type="INTERFACE_NAME"/>
 <xs:element name="INTERFACE_NAME_list" type="INTERFACE_NAME_list" nillable="true"/>
 <xs:element name="Member_list" type="Member_list" nillable="true"/>
 </xs:sequence>
@@ -106,15 +106,15 @@
 
 <xs:group name="Member">
 <xs:choice>
-<xs:element name="Method" type="Method" nillable="false"/>
-<xs:element name="Attribute" type="Attribute" nillable="false"/>
+<xs:element name="Method" type="Method"/>
+<xs:element name="Attribute" type="Attribute"/>
 </xs:choice>
 </xs:group>
 
 <xs:complexType name="Method">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Signature" type="Signature" nillable="false"/>
+<xs:element name="Signature" type="Signature"/>
 <xs:element name="Statement_list" type="Statement_list" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
@@ -122,9 +122,9 @@
 <xs:complexType name="Signature">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Method_mod" type="Method_mod" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="METHOD_NAME" type="METHOD_NAME" nillable="false"/>
+<xs:element name="Method_mod" type="Method_mod"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="METHOD_NAME" type="METHOD_NAME"/>
 <xs:element name="Formal_parameter_list" type="Formal_parameter_list" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
@@ -132,21 +132,21 @@
 <xs:complexType name="Method_mod">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Formal_parameter">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Type" type="Type" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="Name_with_default" type="Name_with_default" nillable="false"/>
+<xs:element name="Type" type="Type"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="Name_with_default" type="Name_with_default"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -160,7 +160,7 @@
 <xs:complexType name="Attribute">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Attr_mod" type="Attr_mod" nillable="false"/>
+<xs:element name="Attr_mod" type="Attr_mod"/>
 <xs:element name="Name_with_default_list" type="Name_with_default_list" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
@@ -168,18 +168,18 @@
 <xs:complexType name="Attr_mod">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Name_with_default">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME"/>
 <xs:group ref="Expr_optional"/>
 </xs:sequence>
 </xs:complexType>
@@ -226,8 +226,8 @@
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:group ref="Expr"/>
 <xs:element name="Variable" type="Variable" nillable="true"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
+<xs:element name="Variable" type="Variable"/>
 <xs:element name="Statement_list" type="Statement_list" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
@@ -294,7 +294,7 @@
 <xs:complexType name="Directive">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="DIRECTIVE_NAME" type="DIRECTIVE_NAME" nillable="false"/>
+<xs:element name="DIRECTIVE_NAME" type="DIRECTIVE_NAME"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -310,8 +310,8 @@
 <xs:complexType name="Catch">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
-<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME"/>
 <xs:element name="Statement_list" type="Statement_list" nillable="true"/>
 </xs:sequence>
 </xs:complexType>
@@ -340,41 +340,41 @@
 
 <xs:group name="Expr">
 <xs:choice>
-<xs:element name="Assignment" type="Assignment" nillable="false"/>
-<xs:element name="Cast" type="Cast" nillable="false"/>
-<xs:element name="Unary_op" type="Unary_op" nillable="false"/>
-<xs:element name="Bin_op" type="Bin_op" nillable="false"/>
-<xs:element name="Constant" type="Constant" nillable="false"/>
-<xs:element name="Instanceof" type="Instanceof" nillable="false"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
-<xs:element name="Pre_op" type="Pre_op" nillable="false"/>
-<xs:element name="Method_invocation" type="Method_invocation" nillable="false"/>
-<xs:element name="New" type="New" nillable="false"/>
-<xs:element name="Op_assignment" type="Op_assignment" nillable="false"/>
-<xs:element name="List_assignment" type="List_assignment" nillable="false"/>
-<xs:element name="Post_op" type="Post_op" nillable="false"/>
-<xs:element name="Array" type="Array" nillable="false"/>
-<xs:element name="Conditional_expr" type="Conditional_expr" nillable="false"/>
-<xs:element name="Ignore_errors" nillable="false"/>
+<xs:element name="Assignment" type="Assignment"/>
+<xs:element name="Cast" type="Cast"/>
+<xs:element name="Unary_op" type="Unary_op"/>
+<xs:element name="Bin_op" type="Bin_op"/>
+<xs:element name="Constant" type="Constant"/>
+<xs:element name="Instanceof" type="Instanceof"/>
+<xs:element name="Variable" type="Variable"/>
+<xs:element name="Pre_op" type="Pre_op"/>
+<xs:element name="Method_invocation" type="Method_invocation"/>
+<xs:element name="New" type="New"/>
+<xs:element name="Op_assignment" type="Op_assignment"/>
+<xs:element name="List_assignment" type="List_assignment"/>
+<xs:element name="Post_op" type="Post_op"/>
+<xs:element name="Array" type="Array"/>
+<xs:element name="Conditional_expr" type="Conditional_expr"/>
+<xs:element name="Ignore_errors"/>
 <xs:group ref="Literal"/>
 </xs:choice>
 </xs:group>
 
 <xs:group name="Literal">
 <xs:choice>
-<xs:element name="INT" type="INT" nillable="false"/>
-<xs:element name="REAL" type="REAL" nillable="false"/>
-<xs:element name="STRING" type="STRING" nillable="false"/>
-<xs:element name="BOOL" type="BOOL" nillable="false"/>
-<xs:element name="NIL" type="NIL" nillable="false"/>
+<xs:element name="INT" type="INT"/>
+<xs:element name="REAL" type="REAL"/>
+<xs:element name="STRING" type="STRING"/>
+<xs:element name="BOOL" type="BOOL"/>
+<xs:element name="NIL" type="NIL"/>
 </xs:choice>
 </xs:group>
 
 <xs:complexType name="Assignment">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="Variable" type="Variable"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -382,8 +382,8 @@
 <xs:complexType name="Op_assignment">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
-<xs:element name="OP" type="OP" nillable="false"/>
+<xs:element name="Variable" type="Variable"/>
+<xs:element name="OP" type="OP"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -391,29 +391,29 @@
 <xs:complexType name="List_assignment">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="List_element_list" type="List_element_list" nillable="false"/>
+<xs:element name="List_element_list" type="List_element_list"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:group name="List_element">
 <xs:choice>
-<xs:element name="Variable" type="Variable" nillable="false"/>
-<xs:element name="Nested_list_elements" type="Nested_list_elements" nillable="false"/>
+<xs:element name="Variable" type="Variable"/>
+<xs:element name="Nested_list_elements" type="Nested_list_elements"/>
 </xs:choice>
 </xs:group>
 
 <xs:complexType name="Nested_list_elements">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="List_element_list" type="List_element_list" nillable="false"/>
+<xs:element name="List_element_list" type="List_element_list"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Cast">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="CAST" type="CAST" nillable="false"/>
+<xs:element name="CAST" type="CAST"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -421,7 +421,7 @@
 <xs:complexType name="Unary_op">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="OP" type="OP" nillable="false"/>
+<xs:element name="OP" type="OP"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -430,7 +430,7 @@
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:group ref="Expr"/>
-<xs:element name="OP" type="OP" nillable="false"/>
+<xs:element name="OP" type="OP"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -455,7 +455,7 @@
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="true"/>
-<xs:element name="CONSTANT_NAME" type="CONSTANT_NAME" nillable="false"/>
+<xs:element name="CONSTANT_NAME" type="CONSTANT_NAME"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -472,14 +472,14 @@
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:group ref="Target_optional"/>
 <xs:group ref="Variable_name"/>
-<xs:element name="Expr_list" type="Expr_list" nillable="false"/>
+<xs:element name="Expr_list" type="Expr_list"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:group name="Variable_name">
 <xs:choice>
-<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME" nillable="false"/>
-<xs:element name="Reflection" type="Reflection" nillable="false"/>
+<xs:element name="VARIABLE_NAME" type="VARIABLE_NAME"/>
+<xs:element name="Reflection" type="Reflection"/>
 </xs:choice>
 </xs:group>
 
@@ -493,23 +493,23 @@
 <xs:group name="Target">
 <xs:choice>
 <xs:group ref="Expr"/>
-<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME"/>
 </xs:choice>
 </xs:group>
 
 <xs:complexType name="Pre_op">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="OP" type="OP" nillable="false"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
+<xs:element name="OP" type="OP"/>
+<xs:element name="Variable" type="Variable"/>
 </xs:sequence>
 </xs:complexType>
 
 <xs:complexType name="Post_op">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="Variable" type="Variable" nillable="false"/>
-<xs:element name="OP" type="OP" nillable="false"/>
+<xs:element name="Variable" type="Variable"/>
+<xs:element name="OP" type="OP"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -524,7 +524,7 @@
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
 <xs:group ref="Expr_optional"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -540,15 +540,15 @@
 
 <xs:group name="Method_name">
 <xs:choice>
-<xs:element name="METHOD_NAME" type="METHOD_NAME" nillable="false"/>
-<xs:element name="Reflection" type="Reflection" nillable="false"/>
+<xs:element name="METHOD_NAME" type="METHOD_NAME"/>
+<xs:element name="Reflection" type="Reflection"/>
 </xs:choice>
 </xs:group>
 
 <xs:complexType name="Actual_parameter">
 <xs:sequence>
 <xs:element name="attrs" type="attrs" form="unqualified"/>
-<xs:element name="bool" type="xs:boolean" form="unqualified" nillable="false"/>
+<xs:element name="bool" type="xs:boolean" form="unqualified"/>
 <xs:group ref="Expr"/>
 </xs:sequence>
 </xs:complexType>
@@ -563,8 +563,8 @@
 
 <xs:group name="Class_name">
 <xs:choice>
-<xs:element name="CLASS_NAME" type="CLASS_NAME" nillable="false"/>
-<xs:element name="Reflection" type="Reflection" nillable="false"/>
+<xs:element name="CLASS_NAME" type="CLASS_NAME"/>
+<xs:element name="Reflection" type="Reflection"/>
 </xs:choice>
 </xs:group>
 
@@ -770,3 +770,4 @@
 </xs:complexType>
 
 </xs:schema>
+
