@@ -265,7 +265,7 @@ class Parameter:
         ast_parse.parse_is_ref(ast_node[1]),
         ast_parse.parse_node(ast_node[2]),
         ast_parse.parse_with_options(ast_node[3],
-               [ast_parse.parse_node, ast_parse.OPTION])
+               [ast_parse.parse_static_scalar_effect, ast_parse.OPTION])
         ])
 
 class Catch:
@@ -278,16 +278,6 @@ class Catch:
                [ast_parse.parse_node, ast_parse.LIST, ast_parse.BRACE])
         ])
 
-class ObjAccess:
-  def __init__(self, ast_node):
-    self.sons = ast_parse.prune_sons([
-        ast_parse.parse_tok(ast_node[0]),
-        ast_parse.parse_node(ast_node[1]),
-        ast_parse.parse_with_options(ast_node[2],
-                [ast_parse.parse_node, ast_parse.COMMA_LIST, 
-                    ast_parse.PAREN, ast_parse.OPTION])
-        ])
-
 class ObjPropAccess:
   def __init__(self, ast_node):
     self.sons = ast_parse.prune_sons([
@@ -298,7 +288,7 @@ class ObjPropAccess:
 class ElseIf:
   def __init__(self, ast_node):
     self.sons = ast_parse.prune_sons([
-        ast_parse.parse_token(ast_node[0]),
+        ast_parse.parse_tok(ast_node[0]),
         ast_parse.parse_with_options(ast_node[1], 
                 [ast_parse.parse_expr, ast_parse.PAREN]),
         ast_parse.parse_node(ast_node[2])
@@ -307,17 +297,17 @@ class ElseIf:
 class Else:
   def __init__(self, ast_node):
     self.sons = ast_parse.prune_sons([
-        ast_parse.parse_token(ast_node[0]),
+        ast_parse.parse_tok(ast_node[0]),
         ast_parse.parse_node(ast_node[1])
         ])
 
 class New_ElseIf:
   def __init__(self, ast_node):
     self.sons = ast_parse.prune_sons([
-        ast_parse.parse_token(ast_node[0]),
+        ast_parse.parse_tok(ast_node[0]),
         ast_parse.parse_with_options(ast_node[1], 
                 [ast_parse.parse_expr, ast_parse.PAREN]),
-        ast_parse.parse_token(ast_node[2]),
+        ast_parse.parse_tok(ast_node[2]),
         ast_parse.parse_with_options(ast_node[3], 
                 [ast_parse.parse_node, ast_parse.LIST])
         ])
@@ -325,8 +315,8 @@ class New_ElseIf:
 class New_Else:
   def __init__(self, ast_node):
     self.sons = ast_parse.prune_sons([
-        ast_parse.parse_token(ast_node[0]),
-        ast_parse.parse_token(ast_node[1]),
+        ast_parse.parse_tok(ast_node[0]),
+        ast_parse.parse_tok(ast_node[1]),
         ast_parse.parse_with_options(ast_node[2],
                 [ast_parse.parse_node, ast_parse.LIST])
         ])

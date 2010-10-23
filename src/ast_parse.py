@@ -71,7 +71,11 @@ def parse_lambda_def(ast_node):
     return prune_sons(res)
 
 def parse_obj_access(ast_node):
-    return ast_nodes.ObjAccess(ast_node)
+    res = [parse_tok(ast_node[0]),
+           parse_node(ast_node[1]),
+           parse_with_options(ast_node[2],
+           [parse_node, COMMA_LIST, PAREN, OPTION])]
+    return prune_sons(res)
 
 def parse_obj_prop_access(ast_node):
     return ast_nodes.ObjPropAccess(ast_node)
@@ -89,12 +93,12 @@ def parse_new_else(ast_node):
     return ast_nodes.New_Else(ast_node)
 
 def parse_is_ref(ast_node):
-    if ast_node and ast_node[0] and ast[0][0] == "Some":
+    if ast_node and ast_node[0] and ast_node[0][0] == "Some":
         return True
     return False
 
 def parse_foreach_variable(ast_node):
-    res = [parse_is_ref(ast_node[0]), parse_lvalue(ast[1])]
+    res = [parse_is_ref(ast_node[0]), parse_lvalue(ast_node[1])]
     return prune_sons(res)
 
 def parse_foreach_variable_or_lvalue(ast_node):
@@ -106,7 +110,7 @@ def parse_foreach_variable_or_lvalue(ast_node):
     return IGNORE_NODE
 
 def parse_foreach_arrow(ast_node):
-    res = [parse_token(ast_node[0]), parse_foreach_variable(ast[1])]
+    res = [parse_tok(ast_node[0]), parse_foreach_variable(ast_node[1])]
     return prune_sons(res)
 
 def parse_catch_name(ast_node):
@@ -121,7 +125,7 @@ def parse_declare(ast_node):
     return prune_sons(res)
 
 def parse_tok_expr(ast_node):
-    res = [parse_token(ast_node[0]), parse_expr(ast[1])]
+    res = [parse_tok(ast_node[0]), parse_expr(ast_node[1])]
     return prune_sons(res)
 
 def parse_static_var(ast_node):
