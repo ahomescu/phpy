@@ -113,7 +113,17 @@ def parse_foreach_arrow(ast_node):
     res = [parse_tok(ast_node[0]), parse_foreach_variable(ast_node[1])]
     return prune_sons(res)
 
-def parse_catch_name(ast_node):
+def parse_tok_node_pair(ast_node):
+    res = [parse_tok(ast_node[0]), parse_node(ast_node[1])]
+    return prune_sons(res)
+
+def parse_class_name_ref_dynamic(ast_node):
+    res = [parse_lvalue(ast_node[0]), 
+           parse_with_options(ast_node[1],
+                [parse_obj_prop_access, LIST])]
+    return prune_sons(res)
+
+def parse_node_node_pair(ast_node):
     res = [parse_node(ast_node[0]), parse_node(ast_node[1])]
     return prune_sons(res)
 
@@ -124,7 +134,7 @@ def parse_declare(ast_node):
     res = [parse_node(ast_node[0]), parse_static_scalar_effect(ast_node[1])]
     return prune_sons(res)
 
-def parse_tok_expr(ast_node):
+def parse_tok_expr_pair(ast_node):
     res = [parse_tok(ast_node[0]), parse_expr(ast_node[1])]
     return prune_sons(res)
 
@@ -155,10 +165,6 @@ def parse_func_def(ast_node):
                [parse_node, LIST, BRACE])]
     return prune_sons(res)
 
-def parse_extend(ast_node):
-    # NOTE: ast_node[0] is token info
-    return parse_node(ast_node[1])
-
 def parse_interface(ast_node):
     # NOTE: ast_node[0] is token info
     return parse_with_options(ast_node[1],
@@ -168,7 +174,7 @@ def parse_class_def(ast_node):
     res = [parse_node(ast_node['c_type']),
            parse_node(ast_node['c_name']),
            parse_with_options(ast_node['c_extends'],
-               [parse_extend, OPTION]),
+               [parse_tok_node_pair, OPTION]),
            parse_with_options(ast_node['c_implements'],
                [parse_interface, OPTION]),
            parse_with_options(ast_node['c_body'],

@@ -57,7 +57,7 @@ node_descs = {
     "EDots": [['parse_info']],
     "ParenExpr": [['parse_expr', 'PAREN']],
     "C": [['parse_node']],
-    "ClassConstant": [['parse_node'], ['parse_node']],
+    "ClassConstant": [['parse_node_node_pair']],
     "Guil": [['parse_tok'], ['parse_node', 'LIST'], ['parse_tok']],
     "HereDoc": [['parse_tok'], ['parse_node', 'LIST'], ['parse_tok']],
     "Int": [['parse_string', 'WRAP']],
@@ -118,8 +118,7 @@ node_descs = {
     "ArrayArrowRef": [['parse_expr'], ['parse_tok'],
                 ['parse_tok'], ['parse_lvalue']],
     "ClassNameRefStatic": [['parse_node']],
-    "ClassNameRefDynamic": [['parse_lvalue'],
-                ['parse_obj_prop_access', 'LIST']],
+    "ClassNameRefDynamic": [['parse_class_name_ref_dynamic']],
 
     # Lvalues
     "Var": [['parse_node'], ['parse_scope', 'REF']],
@@ -183,7 +182,7 @@ node_descs = {
     "Declare": [['parse_tok'], ['parse_declare', 'COMMA_LIST', 'PAREN'],
                 ['parse_node']],
     "TypedDeclaration": [['parse_node'], ['parse_lvalue'],
-                         ['parse_tok_expr', 'OPTION'], ['parse_tok']],
+                         ['parse_tok_expr_pair', 'OPTION'], ['parse_tok']],
     "CaseList": [['parse_tok'], ['parse_tok', 'OPTION'],
                  ['parse_node', 'LIST'], ['parse_tok']],
     "CaseColonList": [['parse_tok'], ['parse_tok', 'OPTION'],
@@ -227,7 +226,7 @@ node_descs = {
     "GlobalDollar": [['parse_tok'], ['parse_lvalue']],
     "GlobalDollarExpr": [['parse_tok'], ['parse_expr', 'BRACE']],
     "StaticConstant": [['parse_node']],
-    "StaticClassConstant": [['parse_node'], ['parse_node']],
+    "StaticClassConstant": [['parse_node_node_pair']],
     "StaticPlus": [['parse_tok'], ['parse_node']],
     "StaticMinus": [['parse_tok'], ['parse_node']],
     "StaticArray": [['parse_tok'], ['parse_node', 'COMMA_LIST', 'PAREN']],
@@ -273,7 +272,7 @@ class Catch:
     self.sons = ast_parse.prune_sons([
         ast_parse.parse_tok(ast_node[0]),
         ast_parse.parse_with_options(ast_node[1],
-               [ast_parse.parse_catch_name, ast_parse.PAREN]),
+               [ast_parse.parse_node_node_pair, ast_parse.PAREN]),
         ast_parse.parse_with_options(ast_node[2],
                [ast_parse.parse_node, ast_parse.LIST, ast_parse.BRACE])
         ])

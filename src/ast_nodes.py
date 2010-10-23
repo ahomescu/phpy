@@ -20,7 +20,7 @@ class Catch:
     self.sons = ast_parse.prune_sons([
         ast_parse.parse_tok(ast_node[0]),
         ast_parse.parse_with_options(ast_node[1],
-               [ast_parse.parse_catch_name, ast_parse.PAREN]),
+               [ast_parse.parse_node_node_pair, ast_parse.PAREN]),
         ast_parse.parse_with_options(ast_node[2],
                [ast_parse.parse_node, ast_parse.LIST, ast_parse.BRACE])
         ])
@@ -79,7 +79,7 @@ class NotIdentical:
 
 class StaticClassConstant:
   def __init__(self, ast_node):
-    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node]), ast_parse.parse_with_options(ast_node[2], [ast_parse.parse_node])])
+    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node_node_pair])])
 
 class Self:
   def __init__(self, ast_node):
@@ -291,7 +291,7 @@ class Exit:
 
 class ClassConstant:
   def __init__(self, ast_node):
-    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node]), ast_parse.parse_with_options(ast_node[2], [ast_parse.parse_node])])
+    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node_node_pair])])
 
 class Method:
   def __init__(self, ast_node):
@@ -355,7 +355,7 @@ class And:
 
 class ClassNameRefDynamic:
   def __init__(self, ast_node):
-    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_lvalue]), ast_parse.parse_with_options(ast_node[2], [ast_parse.parse_obj_prop_access, ast_parse.LIST])])
+    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_class_name_ref_dynamic])])
 
 class DecRight:
   def __init__(self, ast_node):
@@ -679,7 +679,7 @@ class Empty:
 
 class TypedDeclaration:
   def __init__(self, ast_node):
-    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node]), ast_parse.parse_with_options(ast_node[2], [ast_parse.parse_lvalue]), ast_parse.parse_with_options(ast_node[3], [ast_parse.parse_tok_expr, ast_parse.OPTION]), ast_parse.parse_with_options(ast_node[4], [ast_parse.parse_tok])])
+    self.sons = ast_parse.prune_sons([ast_parse.parse_with_options(ast_node[1], [ast_parse.parse_node]), ast_parse.parse_with_options(ast_node[2], [ast_parse.parse_lvalue]), ast_parse.parse_with_options(ast_node[3], [ast_parse.parse_tok_expr_pair, ast_parse.OPTION]), ast_parse.parse_with_options(ast_node[4], [ast_parse.parse_tok])])
 
 class AssignOp:
   def __init__(self, ast_node):
