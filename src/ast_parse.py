@@ -213,6 +213,7 @@ def parse_node(ast_node):
 def parse_program(ast_node):
     return prune_sons([parse_node(x) for x in ast_node])
 
+# Main function for module, call this with JSON file contents
 def parse_json_program(s):
     return parse_program(json.loads(s))
 
