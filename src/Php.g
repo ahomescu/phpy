@@ -20,6 +20,7 @@ tokens {
   Variable;
   ArrayEnd;
   Index;
+  UnaryMinus;
 }
 
 program
@@ -209,7 +210,7 @@ term
   ;
 
 fact
-  : NOT fact
+  : NOT^ fact
   | expr_instanceof
   ;
 
@@ -221,8 +222,8 @@ expr_instanceof
 
 expr_cast
   : expr_incdec
-  | NEG expr_incdec
-  | MINUS expr_incdec
+  | NEG^ expr_incdec
+  | MINUS expr_incdec -> ^(UnaryMinus expr_incdec)
   ;
 
 expr_incdec
