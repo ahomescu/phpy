@@ -82,6 +82,7 @@ statement
   | ^(Block statement+)
   | if_statement
   | while_statement
+  | echo_statement
   | KW_BREAK
   | KW_CONTINUE
   ;
@@ -94,13 +95,28 @@ while_statement
   : ^(KW_WHILE expr statement)
   ;
 
+echo_statement
+  : ^(KW_ECHO expr)
+  ;
+
 incdec_op
   : INCR
   | DECR
   ;
 
 expr
-  : ^(assign_op expr expr)
+  : ^(EQ expr expr)
+  | ^(PLUS_EQ expr expr)
+  | ^(MINUS_EQ expr expr)
+  | ^(MUL_EQ expr expr)
+  | ^(DIV_EQ expr expr)
+  | ^(DOT_EQ expr expr)
+  | ^(MOD_EQ expr expr)
+  | ^(AND_EQ expr expr)
+  | ^(OR_EQ expr expr)
+  | ^(XOR_EQ expr expr)
+  | ^(SHL_EQ expr expr)
+  | ^(SHR_EQ expr expr)
   | ^(LOG_OR expr expr)
   | ^(LOG_AND expr expr)
   | ^(OR expr expr)
@@ -156,19 +172,4 @@ variable_name
   : ^(DOLLAR ID)
   | ^(DOLLAR variable_name)
   | ^(DOLLAR expr)
-  ;
-
-assign_op
-  : EQ
-  | PLUS_EQ
-  | MINUS_EQ
-  | MUL_EQ
-  | DIV_EQ
-  | DOT_EQ
-  | MOD_EQ
-  | AND_EQ
-  | OR_EQ
-  | XOR_EQ
-  | SHL_EQ
-  | SHR_EQ
   ;

@@ -46,7 +46,7 @@ const_initializer
   ;
 
 function_def
-  : KW_FUNCTION name=ID (LPAREN formal_parameter_list RPAREN)?
+  : KW_FUNCTION name=ID LPAREN formal_parameter_list? RPAREN
     LBRACE statement* RBRACE -> ^(KW_FUNCTION $name
       formal_parameter_list? statement*)
   ;
@@ -96,7 +96,7 @@ class_statement
 
 class_method_def
   : method_mod_list KW_FUNCTION is_ref name=ID
-      (LPAREN formal_parameter_list RPAREN)? method_body
+      LPAREN formal_parameter_list? RPAREN method_body
       -> ^(KW_FUNCTION $name method_mod_list is_ref
                         formal_parameter_list? method_body)
   ;
@@ -130,6 +130,7 @@ statement
   | LBRACE statement+ RBRACE  -> ^(Block statement+)
   | if_statement
   | while_statement
+  | echo_statement SEMICOLON!
   | KW_BREAK SEMICOLON        -> KW_BREAK
   | KW_CONTINUE SEMICOLON     -> KW_CONTINUE
   ;
@@ -141,6 +142,10 @@ if_statement
 
 while_statement
   : KW_WHILE LPAREN expr RPAREN statement -> ^(KW_WHILE expr statement)
+  ;
+
+echo_statement
+  : KW_ECHO expr -> ^(KW_ECHO expr)
   ;
 
 expr
@@ -248,7 +253,7 @@ atom
   ;
 
 new_object
-  : KW_NEW class_name (LPAREN actual_parameter_list RPAREN)? 
+  : KW_NEW class_name LPAREN actual_parameter_list? RPAREN
       -> ^(KW_NEW class_name actual_parameter_list?)
   ;
 
@@ -262,7 +267,7 @@ variable_or_call
   ;
 
 indexed_function_call
-  : name=ID (LPAREN actual_parameter_list RPAREN)? call_result_index* ->
+  : name=ID LPAREN actual_parameter_list? RPAREN call_result_index* ->
     ^(Call $name actual_parameter_list? call_result_index*) ;
 
 actual_parameter_list
@@ -315,6 +320,7 @@ KW_FALSE: ('f' | 'F') ('a' | 'A') ('l' | 'L') ('s' | 'S') ('e' | 'E') ;
 KW_IF: 'if' ;
 KW_ELSE: 'else' ;
 KW_WHILE: 'while' ;
+KW_ECHO: 'echo' ;
 KW_CONST: 'const';
 KW_INSTANCEOF: 'instanceof';
 KW_NEW: 'new';
