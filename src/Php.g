@@ -7,20 +7,19 @@ options {
 }
 
 tokens {
-  SimpleCall;
-  Name;
+  Call;
   CallerObject;
-  PARAMETER;
-  ABSTRACT_METHOD;
-  REFERENCE;
-  MODIFIERS;
-  BLOCK;
-  EVAL_EXPR;
-  VAR_OR_ASSIGN;
-  PRE;
-  POST;
-  VARIABLE;
-  ARRAY_END;
+  Parameter;
+  AbstractMethod;
+  Reference;
+  Modifiers;
+  Block;
+  EvalExpr;
+  Pre;
+  Post;
+  Variable;
+  ArrayEnd;
+  Index;
 }
 
 program
@@ -57,7 +56,7 @@ formal_parameter_list
   ;
 
 formal_parameter
-  : ID -> ^(PARAMETER ID)
+  : ID -> ^(Parameter ID)
   ;
 
 class_def
@@ -102,7 +101,7 @@ class_method_def
   ;
 
 method_mod_list
-  : method_mod+ -> ^(MODIFIERS method_mod+)
+  : method_mod+ -> ^(Modifiers method_mod+)
   |
   ;
 
@@ -117,17 +116,17 @@ method_mod
 
 is_ref
   :
-  | AND -> REFERENCE
+  | AND -> Reference
   ;
 
 method_body
-  : SEMICOLON -> ABSTRACT_METHOD
+  : SEMICOLON -> AbstractMethod
   | LBRACE statement* RBRACE -> statement*
   ;
 
 statement
-  : expr SEMICOLON            -> ^(EVAL_EXPR expr)
-  | LBRACE statement+ RBRACE  -> ^(BLOCK statement+)
+  : expr SEMICOLON            -> ^(EvalExpr expr)
+  | LBRACE statement+ RBRACE  -> ^(Block statement+)
   | if_statement
   | while_statement
   ;
@@ -217,26 +216,10 @@ expr_cast
   ;
 
 expr_incdec
-  : op=(INCR | DECR) expr_index -> ^(PRE expr_index $op)
-  | (expr_index (INCR | DECR)) =>
-      expr_index op=(INCR | DECR) -> ^(POST expr_index $op)
-  | expr_index
-  ;
-
-expr_index
-  : expr_leaf
-  ;
-
-expr_leaf
-  : (atom OBJ_ACCESS) => call_chain
+  : op=(INCR | DECR) atom -> ^(Pre atom $op)
+  | (atom (INCR | DECR)) =>
+      atom op=(INCR | DECR) -> ^(Post atom $op)
   | atom
-  ;
-
-call_chain
-  : (atom d1=OBJ_ACCESS call_tail ->
-    ^($d1 ^(CallerObject atom) call_tail))
-    ((OBJ_ACCESS) => d2=OBJ_ACCESS t=call_tail ->
-    ^($d2 ^(CallerObject $call_chain) $t))*
   ;
 
 atom
@@ -245,22 +228,44 @@ atom
   | L_STRING
   | KW_TRUE
   | KW_FALSE
-  | (ID LPAREN) => call_tail -> ^(SimpleCall call_tail)
-  | indexed_variable
+  | variable_or_call_list
   ;
 
-call_tail
-  : ID LPAREN (expr (COMMA expr)*)? RPAREN ->
-    ^(Name ID) ^(LPAREN (expr+)?) ;
+variable_or_call_list
+  : variable_or_call (OBJ_ACCESS^ variable_or_call)*
+  ;
+
+variable_or_call
+  : indexed_variable
+  | indexed_function_call
+  ;
+
+indexed_function_call
+  : name=ID LPAREN actual_parameter_list RPAREN call_result_index* ->
+    ^(Call $name actual_parameter_list call_result_index*) ;
+
+actual_parameter_list
+  : actual_parameter (COMMA actual_parameter_list)?
+    -> actual_parameter actual_parameter_list?
+  |
+  ;
+
+actual_parameter
+  : expr -> ^(Parameter expr)
+  ;
 
 indexed_variable
-  : variable_name variable_index* -> ^(VARIABLE variable_name variable_index*)
+  : variable_name variable_index* -> ^(Variable variable_name variable_index*)
+  ;
+
+call_result_index
+  : LBRACKET expr RBRACKET -> ^(Index expr)
+  | LBRACKET RBRACKET -> ^(Index ArrayEnd)
   ;
 
 variable_index
-  : LBRACKET expr RBRACKET -> expr
-  | LBRACKET RBRACKET -> ARRAY_END
-  | LBRACE expr RBRACE -> expr
+  : call_result_index
+  | LBRACE expr RBRACE -> ^(Index expr)
   ;
 
 variable_name
@@ -292,6 +297,7 @@ KW_ELSE: 'else' ;
 KW_WHILE: 'while' ;
 KW_CONST: 'const';
 KW_INSTANCEOF: 'instanceof';
+KW_NEW: 'new';
 
 ID:
   ('a'..'z'|'A'..'Z'|'_'|'\u007f'..'\u00ff') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u007f'..'\u00ff')*
