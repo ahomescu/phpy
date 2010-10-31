@@ -45,14 +45,14 @@ const_initializer
   ;
 
 function_def
-  : KW_FUNCTION name=ID LPAREN formal_parameter_list RPAREN
+  : KW_FUNCTION name=ID (LPAREN formal_parameter_list RPAREN)?
     LBRACE statement* RBRACE -> ^(KW_FUNCTION $name
-      formal_parameter_list statement*)
+      formal_parameter_list? statement*)
   ;
 
 formal_parameter_list
-  : formal_parameter (COMMA formal_parameter_list)?
-      -> formal_parameter formal_parameter_list?
+  : formal_parameter (COMMA formal_parameter)*
+      -> formal_parameter+
   ;
 
 formal_parameter
@@ -95,9 +95,9 @@ class_statement
 
 class_method_def
   : method_mod_list KW_FUNCTION is_ref name=ID
-      LPAREN formal_parameter_list RPAREN method_body
+      (LPAREN formal_parameter_list RPAREN)? method_body
       -> ^(KW_FUNCTION $name method_mod_list is_ref
-                        formal_parameter_list method_body)
+                        formal_parameter_list? method_body)
   ;
 
 method_mod_list
@@ -261,13 +261,12 @@ variable_or_call
   ;
 
 indexed_function_call
-  : name=ID LPAREN actual_parameter_list RPAREN call_result_index* ->
-    ^(Call $name actual_parameter_list call_result_index*) ;
+  : name=ID (LPAREN actual_parameter_list RPAREN)? call_result_index* ->
+    ^(Call $name actual_parameter_list? call_result_index*) ;
 
 actual_parameter_list
-  : actual_parameter (COMMA actual_parameter_list)?
-    -> actual_parameter actual_parameter_list?
-  |
+  : actual_parameter (COMMA actual_parameter)*
+    -> actual_parameter+
   ;
 
 actual_parameter
