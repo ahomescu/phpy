@@ -56,7 +56,7 @@ formal_parameter_list
   ;
 
 formal_parameter
-  : ID -> ^(Parameter ID)
+  : DOLLAR ID -> ^(Parameter ID)
   ;
 
 class_def
