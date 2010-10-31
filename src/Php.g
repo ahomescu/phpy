@@ -19,6 +19,8 @@ tokens {
   VAR_OR_ASSIGN;
   PRE;
   POST;
+  VARIABLE;
+  ARRAY_END;
 }
 
 program
@@ -150,9 +152,11 @@ expr
 
 expr_assign
   : logical_or
-  | variable op=(PLUS_EQ | MINUS_EQ | MUL_EQ | DIV_EQ | DOT_EQ | MOD_EQ |
-                 AND_EQ | OR_EQ | XOR_EQ | SHL_EQ | SHR_EQ) expr_assign
-      -> ^($op variable expr_assign)
+  | (variable_name (PLUS_EQ | MINUS_EQ | MUL_EQ | DIV_EQ | DOT_EQ | MOD_EQ |
+                    AND_EQ | OR_EQ | XOR_EQ | SHL_EQ | SHR_EQ)) =>
+     variable_name op=(PLUS_EQ | MINUS_EQ | MUL_EQ | DIV_EQ | DOT_EQ | MOD_EQ |
+                      AND_EQ | OR_EQ | XOR_EQ | SHL_EQ | SHR_EQ) expr_assign
+      -> ^($op variable_name expr_assign)
   ;
 
 logical_or
@@ -242,15 +246,26 @@ atom
   | KW_TRUE
   | KW_FALSE
   | (ID LPAREN) => call_tail -> ^(SimpleCall call_tail)
+  | indexed_variable
   ;
 
 call_tail
   : ID LPAREN (expr (COMMA expr)*)? RPAREN ->
     ^(Name ID) ^(LPAREN (expr+)?) ;
 
-variable
+indexed_variable
+  : variable_name variable_index* -> ^(VARIABLE variable_name variable_index*)
+  ;
+
+variable_index
+  : LBRACKET expr RBRACKET -> expr
+  | LBRACKET RBRACKET -> ARRAY_END
+  | LBRACE expr RBRACE -> expr
+  ;
+
+variable_name
   : DOLLAR^ ID
-  | DOLLAR^ variable
+  | DOLLAR^ variable_name
   | DOLLAR^ LBRACE! expr RBRACE!
   ;
 
@@ -290,6 +305,8 @@ LPAREN: '(' ;
 RPAREN: ')' ;
 LBRACE: '{' ;
 RBRACE: '}' ;
+LBRACKET: '[' ;
+RBRACKET: ']' ;
 DOLLAR: '$' ;
 COLON: ':' ;
 SEMICOLON: ';' ;
