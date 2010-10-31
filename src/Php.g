@@ -23,7 +23,7 @@ tokens {
 }
 
 program
-  : top_statement*
+  : PHP_START top_statement* PHP_END -> top_statement*
   ;
 
 top_statement
@@ -150,12 +150,25 @@ expr
   ;
 
 expr_assign
-  : logical_or
-  | (variable_name (PLUS_EQ | MINUS_EQ | MUL_EQ | DIV_EQ | DOT_EQ | MOD_EQ |
-                    AND_EQ | OR_EQ | XOR_EQ | SHL_EQ | SHR_EQ)) =>
-     variable_name op=(PLUS_EQ | MINUS_EQ | MUL_EQ | DIV_EQ | DOT_EQ | MOD_EQ |
-                      AND_EQ | OR_EQ | XOR_EQ | SHL_EQ | SHR_EQ) expr_assign
-      -> ^($op variable_name expr_assign)
+  : (indexed_variable assign_op) =>
+     indexed_variable assign_op expr_assign
+      -> ^(assign_op indexed_variable expr_assign)
+  | logical_or
+  ;
+
+assign_op
+  : EQ
+  | PLUS_EQ
+  | MINUS_EQ
+  | MUL_EQ
+  | DIV_EQ
+  | DOT_EQ
+  | MOD_EQ
+  | AND_EQ
+  | OR_EQ
+  | XOR_EQ
+  | SHL_EQ
+  | SHR_EQ
   ;
 
 logical_or
@@ -229,6 +242,12 @@ atom
   | KW_TRUE
   | KW_FALSE
   | variable_or_call_list
+  | new_object
+  ;
+
+new_object
+  : KW_NEW class_name (LPAREN actual_parameter_list RPAREN)? 
+      -> ^(KW_NEW class_name actual_parameter_list?)
   ;
 
 variable_or_call_list
@@ -299,6 +318,9 @@ KW_CONST: 'const';
 KW_INSTANCEOF: 'instanceof';
 KW_NEW: 'new';
 
+PHP_START: '<?php' ;
+PHP_END: '?>' ;
+
 ID:
   ('a'..'z'|'A'..'Z'|'_'|'\u007f'..'\u00ff') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'\u007f'..'\u00ff')*
   ;
@@ -361,3 +383,7 @@ SHR_EQ: '>>=' ;
 fragment ESC_SEQ
   : '\\' .
   ;
+
+WHITESPACE: (' ' | '\t') { $channel = HIDDEN; };
+NEWLINE: ('\r')? ('\n') { $channel = HIDDEN; };
+
