@@ -129,16 +129,13 @@ statement
   | LBRACE statement+ RBRACE  -> ^(Block statement+)
   | if_statement
   | while_statement
+  | KW_BREAK SEMICOLON        -> KW_BREAK
+  | KW_CONTINUE SEMICOLON     -> KW_CONTINUE
   ;
 
 if_statement
-  : KW_IF LPAREN expr RPAREN statement if_else
-      -> ^(KW_IF expr statement if_else)
-  ;
-
-if_else
-  : (KW_ELSE) => KW_ELSE statement -> ^(KW_ELSE statement)
-  |
+  : KW_IF LPAREN expr RPAREN s1=statement ((KW_ELSE) => KW_ELSE s2=statement)?
+      -> ^(KW_IF expr $s1 $s2?)
   ;
 
 while_statement
@@ -229,10 +226,14 @@ expr_cast
   ;
 
 expr_incdec
-  : op=(INCR | DECR) atom -> ^(Pre atom $op)
-  | (atom (INCR | DECR)) =>
-      atom op=(INCR | DECR) -> ^(Post atom $op)
-  | atom
+  : incdec_op atom -> ^(Pre atom incdec_op)
+  | atom (incdec_op -> ^(Post atom incdec_op)
+         |          -> atom)
+  ;
+
+incdec_op
+  : INCR
+  | DECR
   ;
 
 atom
@@ -317,6 +318,8 @@ KW_WHILE: 'while' ;
 KW_CONST: 'const';
 KW_INSTANCEOF: 'instanceof';
 KW_NEW: 'new';
+KW_BREAK: 'break';
+KW_CONTINUE: 'continue';
 
 PHP_START: '<?php' ;
 PHP_END: '?>' ;
