@@ -11,6 +11,9 @@ options {
 }
 
 @members {
+  VAR_PREFIX = 'v_'
+  TEMP_PREFIX = 't_'
+  
   indentLevel = 0
   was_indent = False
   was_newline = False
@@ -47,7 +50,7 @@ options {
     self.print_newline()
 
   def get_temp(self):
-    tmp = 'tmp\%d' \% self.next_temp
+    tmp = '\%s\%d' \% (self.TEMP_PREFIX, self.next_temp)
     self.next_temp += 1
     return tmp
 }
@@ -162,7 +165,7 @@ statement
 }
 @after {
   self.print_newline()
-} : ^(EvalExpr expr { self.print_line($expr.val) })
+} : ^(EvalExpr expr)
   | ^(Block statement+)
   | if_statement
   | while_statement
@@ -272,7 +275,7 @@ expr returns [val]
     })
   | ^(Post voc=variable_or_call incdec_op
     {
-      $val = self.gen_temp()
+      $val = self.get_temp()
       self.print_line('\%s = \%s[0]' \% ($val, $voc.tmp))
       self.print_line('\%s[0] = \%s[0] \%s 1' \% ($voc.tmp, 
                         $voc.tmp, $incdec_op.op))
@@ -280,42 +283,40 @@ expr returns [val]
   ;
 
 variable_or_call returns [tmp]
-  : ^(Call name=ID { self.print_custom($ID.text + '(') }
-      actual_parameter_list
-      { self.print_custom(')') }
-      index*)
-  | ^(Variable 
-      variable_name { $tmp = $variable_name.tmp }
-      index*)
+  : ^(Call name=ID apl=actual_parameter_list 
+      { indices = [] } (index { indices.append($index.idx) })* 
+    {
+      $tmp = self.get_temp()
+      index_list = ','.join(('[0][\%s]' \% x) for x in indices)
+      self.print_line('\%s = \%s(\%s)\%s' \% ($tmp, $name.text, 
+                            $apl.params_list, index_list))
+    })
+  | ^(Variable variable_name
+      { indices = [] } (index { indices.append($index.idx) })*)
+    {
+      index_list = ','.join(('[0][\%s]' \% x) for x in indices)
+      $tmp = $variable_name.tmp + index_list
+    }
   | ^(OBJ_ACCESS variable_or_call variable_or_call)
   ;
 
-actual_parameter_list
-  : (^(Parameter expr))+
+actual_parameter_list returns [params_list]
+  : { params = [] } (^(Parameter expr { params.append($expr.val) }))+
+    { $params_list = ','.join(params) }
   ;
 
-index
-  : ^(Index ArrayEnd
-      {
-        # TODO - hard
-        self.print_custom('[-1]')
-      })
-  | ^(Index
-      {
-        self.print_custom('[')
-      }
-      expr
-      {
-        self.print_custom(']')
-      })
+index returns [idx]
+  : ^(Index ArrayEnd { $idx = '-1' })
+  | ^(Index expr { $idx = $expr.val })
   ;
 
 variable_name returns [tmp]
   : ^(DOLLAR ID 
     { 
-      $tmp = self.get_temp()
-      self.print_line('try: \%s = \%s' \% ($tmp, $ID.text))
-      self.print_line('except NameError: \%s = \%s = [None]' \% ($tmp, $ID.text))
+      $tmp = '\%s\%s' \% (self.TEMP_PREFIX, $ID.text)
+      self.print_line('try: \%s = \%s\%s' \% ($tmp, self.VAR_PREFIX, $ID.text))
+      self.print_line('except NameError: \%s = \%s\%s = [None]' \% ($tmp, 
+                        self.VAR_PREFIX, $ID.text))
     })
   | ^(DOLLAR variable_name)
   | ^(DOLLAR expr)
