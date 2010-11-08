@@ -203,7 +203,7 @@ assign_op returns [op]
   : PLUS_EQ { $op = '+' }
   | MINUS_EQ { $op = '-' }
   | MUL_EQ { $op = '*' }
-  | DIV_EQ { $op = '/' }
+  | DIV_EQ { $op = '/' } // TODO: figure whether to use / or //
   | MOD_EQ { $op = '\%' }
   | AND_EQ { $op = '&' }
   | OR_EQ { $op = '|' }
@@ -306,6 +306,7 @@ actual_parameter_list returns [params_list]
   ;
 
 index returns [idx]
+// TODO: fix ArrayEnd, this is not correct
   : ^(Index ArrayEnd { $idx = '-1' })
   | ^(Index expr { $idx = $expr.val })
   ;
