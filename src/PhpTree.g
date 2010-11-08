@@ -14,6 +14,7 @@ options {
   indentLevel = 0
   was_indent = False
   was_newline = False
+  next_temp = 0
 
   def indent(self):
     self.indentLevel += 1
@@ -39,6 +40,16 @@ options {
     sys.stdout.write(str)
     self.was_newline = False
     self.was_indent = False
+
+  def print_line(self, str):
+    self.print_indent()
+    self.print_custom(str)
+    self.print_newline()
+
+  def get_temp(self):
+    tmp = 'tmp\%d' \% self.next_temp
+    self.next_temp += 1
+    return tmp
 }
 
 program
@@ -151,7 +162,7 @@ statement
 }
 @after {
   self.print_newline()
-} : ^(EvalExpr expr)
+} : ^(EvalExpr expr { self.print_line($expr.val) })
   | ^(Block statement+)
   | if_statement
   | while_statement
@@ -162,104 +173,121 @@ statement
 
 if_statement
   : ^(KW_IF
-      {
-        self.print_custom('if ')
-      }
-      cond=expr
-      {
-        self.print_custom(':')
-        self.print_newline()
+      cond=expr {
+        self.print_line('if \%s:' \% $cond.val)
         self.indent()
-      }
-      true_stat=statement
-      false_stat=statement?)
-      {
+      } true_stat=statement
+      ({
         self.unindent()
-      }
+        self.print_line('else:')
+        self.indent()
+      } false_stat=statement)? { self.unindent() })
   ;
 
 while_statement
   : ^(KW_WHILE
-      {
-        self.print_custom('while ')
-      }
-      expr
-      {
-        self.print_custom(':')
-        self.print_newline()
+      cond=expr {
+        self.print_line('while \%s:' \% $cond.val)
         self.indent()
-      }
-      statement)
-      {
-        self.unindent()
-      }
+      } statement { self.unindent() })
   ;
 
 echo_statement
-  : ^(KW_ECHO { self.print_custom('sys.stdout.write(str(') } expr { self.print_custom('))') })
+  : ^(KW_ECHO expr { self.print_line('sys.stdout.write(\%s)' \% $expr.val) })
   ;
 
-incdec_op
-  : INCR
-  | DECR
+assign_op returns [op]
+  : PLUS_EQ { $op = '+' }
+  | MINUS_EQ { $op = '-' }
+  | MUL_EQ { $op = '*' }
+  | DIV_EQ { $op = '/' }
+  | MOD_EQ { $op = '\%' }
+  | AND_EQ { $op = '&' }
+  | OR_EQ { $op = '|' }
+  | XOR_EQ { $op = '^' }
+  | SHL_EQ { $op = '<<' }
+  | SHR_EQ { $op = '>>' }
   ;
 
-expr
-  : ^(EQ expr { self.print_custom(' = ') } expr)
-  | ^(PLUS_EQ expr { self.print_custom(' += ') } expr)
-  | ^(MINUS_EQ expr expr)
-  | ^(MUL_EQ expr expr)
-  | ^(DIV_EQ expr expr)
-  | ^(DOT_EQ expr expr)
-  | ^(MOD_EQ expr expr)
-  | ^(AND_EQ expr expr)
-  | ^(OR_EQ expr expr)
-  | ^(XOR_EQ expr expr)
-  | ^(SHL_EQ expr expr)
-  | ^(SHR_EQ expr expr)
-  | ^(LOG_OR expr expr)
-  | ^(LOG_AND expr expr)
-  | ^(OR expr expr)
-  | ^(XOR expr expr)
-  | ^(AND expr expr)
-  | ^(IS_EQ expr { self.print_custom(' == ') } expr)
-  | ^(IS_NEQ expr { self.print_custom(' != ') } expr)
+incdec_op returns [op]
+  : INCR { $op = '+' }
+  | DECR { $op = '-' }
+  ;
+
+expr returns [val]
+  : ^(EQ 
+    voc=variable_or_call e=expr
+    { 
+      self.print_line('\%s[0] = \%s' \% ($voc.tmp, $e.val))
+      $val = '\%s[0]' \% $voc.tmp
+    })
+  | ^(DOT_EQ
+    voc=variable_or_call expr
+    {
+      self.print_line('\%s[0] = repr(\%s[0]) + repr(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
+      $val = '\%s[0]' \% $voc.tmp
+    })
+  | ^(assign_op voc=variable_or_call expr
+    {
+      self.print_line('\%s[0] = \%s[0] \%s \%s' \% ($voc.tmp, 
+                        $voc.tmp, $assign_op.op, $e.val))
+      $val = '\%s[0]' \% $voc.tmp
+    })
+  | ^(LOG_OR { $val = '(\%s or \%s)' \% ($e1.val, $e2.val) })
+  | ^(LOG_AND { $val = '(\%s and \%s)' \% ($e1.val, $e2.val) })
+  | ^(OR { $val = '(\%s | \%s)' \% ($e1.val, $e2.val) })
+  | ^(XOR { $val = '(\%s ^ \%s)' \% ($e1.val, $e2.val) })
+  | ^(AND { $val = '(\%s & \%s)' \% ($e1.val, $e2.val) })
+  | ^(IS_EQ e1=expr e2=expr { $val = '(\%s == \%s)' \% ($e1.val, $e2.val) })
+  | ^(IS_NEQ e1=expr e2=expr { $val = '(\%s != \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_IDENT expr expr)
   | ^(IS_NIDENT expr expr)
-  | ^(IS_LE expr { self.print_custom(' <= ') } expr)
-  | ^(IS_GE expr { self.print_custom(' >= ') } expr)
-  | ^(IS_LT expr { self.print_custom(' < ') } expr)
-  | ^(IS_GT expr { self.print_custom(' > ') } expr)
-  | ^(SHL expr expr)
-  | ^(SHR expr expr)
-  | ^(PLUS expr { self.print_custom(' + ') } expr)
-  | ^(MINUS expr expr)
-  | ^(DOT
-      { self.print_custom('str(') }
-      expr
-      { self.print_custom(') + str(') }
-      expr
-      { self.print_custom(')') })
-  | ^(MUL expr expr)
-  | ^(DIV expr expr)
-  | ^(MOD expr { self.print_custom(' \% ') } expr)
+  | ^(IS_LE e1=expr e2=expr { $val = '(\%s <= \%s)' \% ($e1.val, $e2.val) })
+  | ^(IS_GE e1=expr e2=expr { $val = '(\%s >= \%s)' \% ($e1.val, $e2.val) })
+  | ^(IS_LT e1=expr e2=expr { $val = '(\%s < \%s)' \% ($e1.val, $e2.val) })
+  | ^(IS_GT e1=expr e2=expr { $val = '(\%s > \%s)' \% ($e1.val, $e2.val) })
+  | ^(SHL { $val = '(\%s << \%s)' \% ($e1.val, $e2.val) })
+  | ^(SHR { $val = '(\%s >> \%s)' \% ($e1.val, $e2.val) })
+  | ^(PLUS e1=expr e2=expr  { $val = '(\%s + \%s)' \% ($e1.val, $e2.val) })
+  | ^(MINUS e1=expr e2=expr { $val = '(\%s - \%s)' \% ($e1.val, $e2.val) })
+  | ^(DOT e1=expr e2=expr { $val = '(repr(\%s) + repr(\%s))' \% ($e1.val, $e2.val) })
+  | ^(MUL e1=expr e2=expr { $val = '(\%s * \%s)' \% ($e1.val, $e2.val) })
+  | ^(DIV e1=expr e2=expr { $val = '(\%s / \%s)' \% ($e1.val, $e2.val) })
+  | ^(MOD e1=expr e2=expr { $val = '(\%s \%\% \%s)' \% ($e1.val, $e2.val) })
   | ^(NOT expr)
   | ^(KW_INSTANCEOF expr class_name)
   | ^(UnaryMinus expr)
   | ^(NEG expr)
-  | ^(Pre expr incdec_op)
-  | ^(Post expr incdec_op)
-  | L_INT { self.print_custom($L_INT.text) }
-  | L_STRING { self.print_custom($L_STRING.text) }
-  | KW_TRUE
-  | KW_FALSE
-  | ^(OBJ_ACCESS variable_or_call variable_or_call)
+  | L_INT { $val = $L_INT.text }
+  | L_STRING { $val = $L_STRING.text }
+  | KW_TRUE { $val = "True" }
+  | KW_FALSE { $val = "False" }
   | ^(KW_NEW class_name actual_parameter_list?)
-  | ^(Call name=ID { self.print_custom($ID.text + '(') }
+  | voc=variable_or_call { $val = '\%s[0]' \% $voc.tmp }
+  | ^(Pre voc=variable_or_call incdec_op
+    {
+      self.print_line('\%s[0] = \%s[0] \%s 1' \% ($voc.tmp, 
+                        $voc.tmp, $incdec_op.op))
+      $val = '\%s[0]' \% $voc.tmp
+    })
+  | ^(Post voc=variable_or_call incdec_op
+    {
+      $val = self.gen_temp()
+      self.print_line('\%s = \%s[0]' \% ($val, $voc.tmp))
+      self.print_line('\%s[0] = \%s[0] \%s 1' \% ($voc.tmp, 
+                        $voc.tmp, $incdec_op.op))
+    })
+  ;
+
+variable_or_call returns [tmp]
+  : ^(Call name=ID { self.print_custom($ID.text + '(') }
       actual_parameter_list
       { self.print_custom(')') }
       index*)
-  | ^(Variable variable_name index*)
+  | ^(Variable 
+      variable_name { $tmp = $variable_name.tmp }
+      index*)
+  | ^(OBJ_ACCESS variable_or_call variable_or_call)
   ;
 
 actual_parameter_list
@@ -282,13 +310,14 @@ index
       })
   ;
 
-variable_or_call
-  : ^(Variable variable_name index*)
-  | ^(Call name=ID actual_parameter_list? index*)
-  ;
-
-variable_name
-  : ^(DOLLAR ID { self.print_custom($ID.text) })
+variable_name returns [tmp]
+  : ^(DOLLAR ID 
+    { 
+      $tmp = self.get_temp()
+      self.print_line('try: \%s = \%s' \% ($tmp, $ID.text))
+      self.print_line('except NameError: \%s = \%s = [None]' \% ($tmp, $ID.text))
+    })
   | ^(DOLLAR variable_name)
   | ^(DOLLAR expr)
   ;
+

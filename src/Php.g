@@ -232,9 +232,11 @@ expr_cast
   ;
 
 expr_incdec
-  : incdec_op atom -> ^(Pre atom incdec_op)
-  | atom (incdec_op -> ^(Post atom incdec_op)
-         |          -> atom)
+  : incdec_op variable_or_call_list -> ^(Pre variable_or_call_list incdec_op)
+  | variable_or_call_list 
+         (incdec_op -> ^(Post variable_or_call_list incdec_op)
+         |          -> variable_or_call_list)
+  | atom
   ;
 
 incdec_op
@@ -248,7 +250,6 @@ atom
   | L_STRING
   | KW_TRUE
   | KW_FALSE
-  | variable_or_call_list
   | new_object
   ;
 
