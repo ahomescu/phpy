@@ -60,10 +60,10 @@ program
   print 'import sys'
   print ''
   print 'def array(x):'
-  print '  return [x]'
+  print '  return [[[x]]]'
   print ''
   print 'def count(x):'
-  print '  return len(x)'
+  print '  return [len(x)]'
   print ''
 } : top_statement*
   ;
@@ -160,18 +160,13 @@ method_body
   ;
 
 statement
-@init {
-  self.print_indent()
-}
-@after {
-  self.print_newline()
-} : ^(EvalExpr expr)
-  | ^(Block statement+)
-  | if_statement
+  : if_statement
   | while_statement
   | echo_statement
-  | KW_BREAK { self.print_custom($KW_BREAK.text) }
-  | KW_CONTINUE { self.print_custom($KW_CONTINUE.text) }
+  | KW_BREAK { self.print_line('break') }
+  | KW_CONTINUE { self.print_line('continue') }
+  | ^(Block statement+)
+  | ^(EvalExpr expr)
   ;
 
 if_statement
@@ -189,9 +184,15 @@ if_statement
 
 while_statement
   : ^(KW_WHILE
-      cond=expr {
-        self.print_line('while \%s:' \% $cond.val)
+      {
+        self.print_line('while True:')
         self.indent()
+      }
+      cond=expr {
+        self.print_line('if not \%s:' \% $expr.val)
+        self.indent()
+        self.print_line('break')
+        self.unindent()
       } statement { self.unindent() })
   ;
 
@@ -227,7 +228,7 @@ expr returns [val]
   | ^(DOT_EQ
     voc=variable_or_call expr
     {
-      self.print_line('\%s[0] = repr(\%s[0]) + repr(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
+      self.print_line('\%s[0] = str(\%s[0]) + str(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
       $val = '\%s[0]' \% $voc.tmp
     })
   | ^(assign_op voc=variable_or_call expr
@@ -253,7 +254,7 @@ expr returns [val]
   | ^(SHR { $val = '(\%s >> \%s)' \% ($e1.val, $e2.val) })
   | ^(PLUS e1=expr e2=expr  { $val = '(\%s + \%s)' \% ($e1.val, $e2.val) })
   | ^(MINUS e1=expr e2=expr { $val = '(\%s - \%s)' \% ($e1.val, $e2.val) })
-  | ^(DOT e1=expr e2=expr { $val = '(repr(\%s) + repr(\%s))' \% ($e1.val, $e2.val) })
+  | ^(DOT e1=expr e2=expr { $val = '(str(\%s) + str(\%s))' \% ($e1.val, $e2.val) })
   | ^(MUL e1=expr e2=expr { $val = '(\%s * \%s)' \% ($e1.val, $e2.val) })
   | ^(DIV e1=expr e2=expr { $val = '(\%s / \%s)' \% ($e1.val, $e2.val) })
   | ^(MOD e1=expr e2=expr { $val = '(\%s \%\% \%s)' \% ($e1.val, $e2.val) })
@@ -284,30 +285,34 @@ expr returns [val]
 
 variable_or_call returns [tmp]
   : ^(Call name=ID apl=actual_parameter_list 
-      { indices = [] } (index { indices.append($index.idx) })* 
+    { indexed_val = '\%s(\%s)' \% ($name.text, $apl.params_list) } 
+    (index[indexed_val] { indexed_val = '\%s[0][\%s]' \% (indexed_val, $index.idx) })* 
     {
       $tmp = self.get_temp()
-      index_list = ','.join(('[0][\%s]' \% x) for x in indices)
-      self.print_line('\%s = \%s(\%s)\%s' \% ($tmp, $name.text, 
-                            $apl.params_list, index_list))
+      self.print_line('\%s = \%s' \% ($tmp, indexed_val)) 
     })
-  | ^(Variable variable_name
-      { indices = [] } (index { indices.append($index.idx) })*)
+  | ^(Variable variable_name { indexed_val = $variable_name.tmp } 
+    (index[indexed_val] { indexed_val = '\%s[0][\%s]' \% (indexed_val, $index.idx) })*)
     {
-      index_list = ','.join(('[0][\%s]' \% x) for x in indices)
-      $tmp = $variable_name.tmp + index_list
+      $tmp = self.get_temp()
+      self.print_line('\%s = \%s' \% ($tmp, indexed_val)) 
     }
   | ^(OBJ_ACCESS variable_or_call variable_or_call)
   ;
 
 actual_parameter_list returns [params_list]
+  // TODO: actually push references to parameters
   : { params = [] } (^(Parameter expr { params.append($expr.val) }))+
     { $params_list = ','.join(params) }
   ;
 
-index returns [idx]
-// TODO: fix ArrayEnd, this is not correct
-  : ^(Index ArrayEnd { $idx = '-1' })
+index[vector] returns [idx]
+  : ^(Index ArrayEnd
+    {
+      $idx = self.get_temp()
+      self.print_line('\%s = len(\%s[0])' \% ($idx, $vector))
+      self.print_line('\%s[0].append([None])' \% $vector)
+    })
   | ^(Index expr { $idx = $expr.val })
   ;
 

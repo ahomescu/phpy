@@ -15,5 +15,10 @@ while ($i <= 500) {
     $i++;
 }
 
+$i = 0;
+while ($i < count($primes)) {
+  echo $primes[$i] . "\n";
+  $i++;
+}
 
 ?>

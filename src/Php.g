@@ -126,13 +126,13 @@ method_body
   ;
 
 statement
-  : expr SEMICOLON            -> ^(EvalExpr expr)
-  | LBRACE statement+ RBRACE  -> ^(Block statement+)
-  | if_statement
+  : if_statement
   | while_statement
-  | echo_statement SEMICOLON!
+  | echo_statement
   | KW_BREAK SEMICOLON        -> KW_BREAK
   | KW_CONTINUE SEMICOLON     -> KW_CONTINUE
+  | LBRACE statement+ RBRACE  -> ^(Block statement+)
+  | expr SEMICOLON            -> ^(EvalExpr expr)
   ;
 
 if_statement
@@ -145,7 +145,7 @@ while_statement
   ;
 
 echo_statement
-  : KW_ECHO expr -> ^(KW_ECHO expr)
+  : KW_ECHO expr SEMICOLON -> ^(KW_ECHO expr)
   ;
 
 expr
@@ -348,8 +348,6 @@ RBRACKET: ']' ;
 DOLLAR: '$' ;
 COLON: ':' ;
 SEMICOLON: ';' ;
-SINGLE_QUOTE: '\'';
-DOUBLE_QUOTE: '"' ;
 OBJ_ACCESS: '->' ;
 COMMA: ',' ;
 DOT: '.' ;
@@ -393,6 +391,8 @@ SHR_EQ: '>>=' ;
 fragment ESC_SEQ
   : '\\' .
   ;
+fragment SINGLE_QUOTE: '\'';
+fragment DOUBLE_QUOTE: '"' ;
 
 WHITESPACE: (' ' | '\t') { $channel = HIDDEN; };
 NEWLINE: ('\r')? ('\n') { $channel = HIDDEN; };

@@ -11,7 +11,7 @@ tokens = antlr3.CommonTokenStream(lexer)
 parser = PhpParser.PhpParser(tokens)
 
 r = parser.program()
-print r.tree.toStringTree()
+#print r.tree.toStringTree()
 
 root = r.tree
 nodes = antlr3.tree.CommonTreeNodeStream(root)
