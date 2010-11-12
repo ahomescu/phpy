@@ -272,14 +272,12 @@ expr returns [val]
   ;
 
 lvalue returns [lval]
-  : ^(EQ 
-    voc=variable_or_call e=expr
+  : ^(EQ voc=variable_or_call e=expr
     { 
       self.print_line('\%s[0] = \%s' \% ($voc.tmp, $e.val))
       $lval = $voc.tmp
     })
-  | ^(DOT_EQ
-    voc=variable_or_call e=expr
+  | ^(DOT_EQ voc=variable_or_call e=expr
     {
       self.print_line('\%s[0] = str(\%s[0]) + str(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
       $lval = $voc.tmp
@@ -347,12 +345,8 @@ variable_or_call returns [tmp]
       $tmp = self.get_temp()
       self.print_line('\%s = \%s' \% ($tmp, indexed_val)) 
     })
-  | ^(Variable variable_name { indexed_val = $variable_name.tmp } 
-    (index[indexed_val] { indexed_val = '\%s[0][\%s]' \% (indexed_val, $index.idx) })*)
-    {
-      $tmp = self.get_temp()
-      self.print_line('\%s = \%s' \% ($tmp, indexed_val)) 
-    }
+  | ^(Variable variable_name { $tmp = $variable_name.tmp } 
+    (index[$tmp] { $tmp = '\%s[0][\%s]' \% ($tmp, $index.idx) })*)
   | ^(OBJ_ACCESS variable_or_call variable_or_call)
   ;
 
