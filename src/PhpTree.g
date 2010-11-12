@@ -13,6 +13,7 @@ options {
 @members {
   VAR_PREFIX = 'v_'
   TEMP_PREFIX = 't_'
+  PARAM_PREFIX = 'p_'
   
   indentLevel = 0
   was_indent = False
@@ -61,14 +62,12 @@ program
   print ''
   print 'def array(x):'
   print '  arg, is_ref = x'
-  print '  if is_ref:'
-  print '    arg = arg[0]'
+  print '  if is_ref: arg = arg[0]'
   print '  return [[[arg]]]'
   print ''
   print 'def count(x):'
   print '  arg, is_ref = x'
-  print '  if is_ref:'
-  print '    arg = arg[0]'
+  print '  if is_ref: arg = arg[0]'
   print '  return [len(arg)]'
   print ''
 } : top_statement*
@@ -94,12 +93,24 @@ function_def
         self.print_indent()
         self.print_custom('def ' + $name.text + '(')
       }
-      (^(Parameter pname=ID { param_list.append($pname.text) }))*
+      (^(Parameter pname=ID is_ref 
+          { param_list.append(($pname.text, $is_ref.present)) }))*
       {
-        self.print_custom(','.join(param_list))
+        lst = [self.PARAM_PREFIX + x[0] for x in param_list]
+        self.print_custom(','.join(lst))
         self.print_custom('):')
         self.print_newline()
         self.indent()
+
+        for x in param_list:
+          self.print_line('arg, is_ref = \%s\%s' \% (self.PARAM_PREFIX, x[0]))
+          if x[1]:
+            # Parameter is reference
+            # TODO: add assertion for is_ref == True
+            self.print_line('\%s\%s = arg' \% (self.VAR_PREFIX, x[0]))
+          else:
+            self.print_line('if is_ref: arg = arg[0]')
+            self.print_line('\%s\%s = [arg]' \% (self.VAR_PREFIX, x[0]))
       }
       statement*)
       {
@@ -155,9 +166,9 @@ method_mod
   | KW_FINAL
   ;
 
-is_ref
-  :
-  | Reference
+is_ref returns [present]
+  : Reference { $present = True }
+  |           { $present = False }
   ;
 
 method_body
@@ -203,7 +214,7 @@ while_statement
   ;
 
 echo_statement
-  : ^(KW_ECHO expr { self.print_line('sys.stdout.write(\%s)' \% $expr.val) })
+  : ^(KW_ECHO expr { self.print_line('sys.stdout.write(str(\%s))' \% $expr.val) })
   ;
 
 assign_op returns [op]
@@ -265,8 +276,8 @@ rvalue returns [val]
   | ^(AND e1=expr e2=expr { $val = '(\%s & \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_EQ e1=expr e2=expr { $val = '(\%s == \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_NEQ e1=expr e2=expr { $val = '(\%s != \%s)' \% ($e1.val, $e2.val) })
-  | ^(IS_IDENT expr expr)
-  | ^(IS_NIDENT expr expr)
+  | ^(IS_IDENT expr expr) // TODO
+  | ^(IS_NIDENT expr expr) // TODO
   | ^(IS_LE e1=expr e2=expr { $val = '(\%s <= \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_GE e1=expr e2=expr { $val = '(\%s >= \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_LT e1=expr e2=expr { $val = '(\%s < \%s)' \% ($e1.val, $e2.val) })
@@ -279,10 +290,10 @@ rvalue returns [val]
   | ^(MUL e1=expr e2=expr { $val = '(\%s * \%s)' \% ($e1.val, $e2.val) })
   | ^(DIV e1=expr e2=expr { $val = '(\%s / \%s)' \% ($e1.val, $e2.val) })
   | ^(MOD e1=expr e2=expr { $val = '(\%s \%\% \%s)' \% ($e1.val, $e2.val) })
-  | ^(NOT expr)
-  | ^(KW_INSTANCEOF expr class_name)
-  | ^(UnaryMinus expr)
-  | ^(NEG expr)
+  | ^(NOT expr) // TODO
+  | ^(KW_INSTANCEOF expr class_name) // TODO
+  | ^(UnaryMinus expr) // TODO
+  | ^(NEG expr) // TODO
   | L_INT { $val = $L_INT.text }
   | L_STRING { $val = $L_STRING.text }
   | KW_TRUE { $val = "True" }

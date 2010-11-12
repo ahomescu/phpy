@@ -1,11 +1,12 @@
 <?php
 
-function foo($x) {
+function foo($x, &$z) {
   $y = $x + 2;
 }
 
 $z = 2;
-foo($z);
-foo(foo(5));
+foo($z, $z);
+foo(foo(5, $z), $z);
+echo $z;
 
 ?>

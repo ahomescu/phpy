@@ -57,7 +57,7 @@ formal_parameter_list
   ;
 
 formal_parameter
-  : DOLLAR ID -> ^(Parameter ID)
+  : is_ref? DOLLAR ID -> ^(Parameter ID is_ref?)
   ;
 
 class_def
@@ -95,9 +95,9 @@ class_statement
   ;
 
 class_method_def
-  : method_mod_list KW_FUNCTION is_ref name=ID
+  : method_mod_list KW_FUNCTION is_ref? name=ID
       LPAREN formal_parameter_list? RPAREN method_body
-      -> ^(KW_FUNCTION $name method_mod_list is_ref
+      -> ^(KW_FUNCTION $name method_mod_list is_ref?
                         formal_parameter_list? method_body)
   ;
 
@@ -116,8 +116,7 @@ method_mod
   ;
 
 is_ref
-  :
-  | AND -> Reference
+  : AND -> Reference
   ;
 
 method_body
