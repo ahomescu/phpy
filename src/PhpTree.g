@@ -92,9 +92,9 @@ function_def
       {
         self.print_indent()
         self.print_custom('def ' + $name.text + '(')
-      }
-      (^(Parameter pname=ID is_ref 
-          { param_list.append(($pname.text, $is_ref.present)) }))*
+      } irf=is_ref
+      (^(Parameter pname=ID irp=is_ref 
+          { param_list.append(($pname.text, $irp.present)) }))*
       {
         lst = [self.PARAM_PREFIX + x[0] for x in param_list]
         self.print_custom(','.join(lst))
@@ -111,9 +111,14 @@ function_def
           else:
             self.print_line('if is_ref: arg = arg[0]')
             self.print_line('\%s\%s = [arg]' \% (self.VAR_PREFIX, x[0]))
+
+        self.function_returns_ref = $irf.present
       }
       statement*)
       {
+        self.function_returns_ref = False
+        self.print_line('# Generated: default return')
+        self.print_line('return [None]')
         self.unindent()
         self.print_indent()
         self.print_newline()
@@ -180,6 +185,7 @@ statement
   : if_statement
   | while_statement
   | echo_statement
+  | return_statement
   | KW_BREAK { self.print_line('break') }
   | KW_CONTINUE { self.print_line('continue') }
   | ^(Block statement+)
@@ -215,6 +221,31 @@ while_statement
 
 echo_statement
   : ^(KW_ECHO expr { self.print_line('sys.stdout.write(str(\%s))' \% $expr.val) })
+  ;
+
+return_statement
+  : ^(KW_RETURN return_expr { self.print_line('return \%s' \% $return_expr.val) })
+  ;
+
+return_expr returns [val]
+  // TODO: add reference-return
+  : lvalue
+    {
+      if self.function_returns_ref:
+        $val = $lvalue.lval
+      else:
+        $val = '[\%s[0]]' \% $lvalue.lval
+    }
+  | rvalue
+    {
+      # TODO: throw error on function_returns_ref
+      $val = '[\%s]' \% $rvalue.val
+    }
+  |
+    {
+      # TODO: throw error on function_returns_ref
+      $val = '[None]'
+    }
   ;
 
 assign_op returns [op]

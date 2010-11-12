@@ -46,9 +46,9 @@ const_initializer
   ;
 
 function_def
-  : KW_FUNCTION name=ID LPAREN formal_parameter_list? RPAREN
+  : KW_FUNCTION is_ref? name=ID LPAREN formal_parameter_list? RPAREN
     LBRACE statement* RBRACE -> ^(KW_FUNCTION $name
-      formal_parameter_list? statement*)
+      is_ref? formal_parameter_list? statement*)
   ;
 
 formal_parameter_list
@@ -128,6 +128,7 @@ statement
   : if_statement
   | while_statement
   | echo_statement
+  | return_statement
   | KW_BREAK SEMICOLON        -> KW_BREAK
   | KW_CONTINUE SEMICOLON     -> KW_CONTINUE
   | LBRACE statement+ RBRACE  -> ^(Block statement+)
@@ -145,6 +146,10 @@ while_statement
 
 echo_statement
   : KW_ECHO expr SEMICOLON -> ^(KW_ECHO expr)
+  ;
+
+return_statement
+  : KW_RETURN expr? SEMICOLON -> ^(KW_RETURN expr?)
   ;
 
 expr
@@ -326,6 +331,7 @@ KW_INSTANCEOF: 'instanceof';
 KW_NEW: 'new';
 KW_BREAK: 'break';
 KW_CONTINUE: 'continue';
+KW_RETURN: 'return';
 
 PHP_START: '<?php' ;
 PHP_END: '?>' ;

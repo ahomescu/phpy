@@ -2,6 +2,7 @@
 
 function foo($x, &$z) {
   $y = $x + 2;
+  return $y;
 }
 
 $z = 2;
