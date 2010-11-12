@@ -279,12 +279,12 @@ lvalue returns [lval]
       $lval = $voc.tmp
     })
   | ^(DOT_EQ
-    voc=variable_or_call expr
+    voc=variable_or_call e=expr
     {
       self.print_line('\%s[0] = str(\%s[0]) + str(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
       $lval = $voc.tmp
     })
-  | ^(assign_op voc=variable_or_call expr
+  | ^(assign_op voc=variable_or_call e=expr
     {
       self.print_line('\%s[0] = \%s[0] \%s \%s' \% ($voc.tmp, 
                         $voc.tmp, $assign_op.op, $e.val))
@@ -307,8 +307,8 @@ rvalue returns [val]
   | ^(AND e1=expr e2=expr { $val = '(\%s & \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_EQ e1=expr e2=expr { $val = '(\%s == \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_NEQ e1=expr e2=expr { $val = '(\%s != \%s)' \% ($e1.val, $e2.val) })
-  | ^(IS_IDENT expr expr) // TODO
-  | ^(IS_NIDENT expr expr) // TODO
+  | ^(IS_IDENT e1=expr e2=expr) // TODO
+  | ^(IS_NIDENT e1=expr e2=expr) // TODO
   | ^(IS_LE e1=expr e2=expr { $val = '(\%s <= \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_GE e1=expr e2=expr { $val = '(\%s >= \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_LT e1=expr e2=expr { $val = '(\%s < \%s)' \% ($e1.val, $e2.val) })
