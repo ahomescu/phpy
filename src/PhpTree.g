@@ -60,10 +60,16 @@ program
   print 'import sys'
   print ''
   print 'def array(x):'
-  print '  return [[[x]]]'
+  print '  arg, is_ref = x'
+  print '  if is_ref:'
+  print '    arg = arg[0]'
+  print '  return [[[arg]]]'
   print ''
   print 'def count(x):'
-  print '  return [len(x)]'
+  print '  arg, is_ref = x'
+  print '  if is_ref:'
+  print '    arg = arg[0]'
+  print '  return [len(arg)]'
   print ''
 } : top_statement*
   ;
@@ -219,29 +225,44 @@ incdec_op returns [op]
   ;
 
 expr returns [val]
+  : lvalue { $val = '\%s[0]' \% $lvalue.lval }
+  | rvalue { $val = $rvalue.val }
+  ;
+
+lvalue returns [lval]
   : ^(EQ 
     voc=variable_or_call e=expr
     { 
       self.print_line('\%s[0] = \%s' \% ($voc.tmp, $e.val))
-      $val = '\%s[0]' \% $voc.tmp
+      $lval = $voc.tmp
     })
   | ^(DOT_EQ
     voc=variable_or_call expr
     {
       self.print_line('\%s[0] = str(\%s[0]) + str(\%s)' \% ($voc.tmp, $voc.tmp, $e.val))
-      $val = '\%s[0]' \% $voc.tmp
+      $lval = $voc.tmp
     })
   | ^(assign_op voc=variable_or_call expr
     {
       self.print_line('\%s[0] = \%s[0] \%s \%s' \% ($voc.tmp, 
                         $voc.tmp, $assign_op.op, $e.val))
-      $val = '\%s[0]' \% $voc.tmp
+      $lval = $voc.tmp
     })
-  | ^(LOG_OR { $val = '(\%s or \%s)' \% ($e1.val, $e2.val) })
-  | ^(LOG_AND { $val = '(\%s and \%s)' \% ($e1.val, $e2.val) })
-  | ^(OR { $val = '(\%s | \%s)' \% ($e1.val, $e2.val) })
-  | ^(XOR { $val = '(\%s ^ \%s)' \% ($e1.val, $e2.val) })
-  | ^(AND { $val = '(\%s & \%s)' \% ($e1.val, $e2.val) })
+  | ^(Pre voc=variable_or_call incdec_op
+    {
+      self.print_line('\%s[0] = \%s[0] \%s 1' \% ($voc.tmp, 
+                        $voc.tmp, $incdec_op.op))
+      $lval = $voc.tmp
+    })
+  | voc=variable_or_call { $lval = $voc.tmp }
+  ;
+
+rvalue returns [val]
+  : ^(LOG_OR e1=expr e2=expr { $val = '(\%s or \%s)' \% ($e1.val, $e2.val) })
+  | ^(LOG_AND e1=expr e2=expr { $val = '(\%s and \%s)' \% ($e1.val, $e2.val) })
+  | ^(OR e1=expr e2=expr { $val = '(\%s | \%s)' \% ($e1.val, $e2.val) })
+  | ^(XOR e1=expr e2=expr { $val = '(\%s ^ \%s)' \% ($e1.val, $e2.val) })
+  | ^(AND e1=expr e2=expr { $val = '(\%s & \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_EQ e1=expr e2=expr { $val = '(\%s == \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_NEQ e1=expr e2=expr { $val = '(\%s != \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_IDENT expr expr)
@@ -250,8 +271,8 @@ expr returns [val]
   | ^(IS_GE e1=expr e2=expr { $val = '(\%s >= \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_LT e1=expr e2=expr { $val = '(\%s < \%s)' \% ($e1.val, $e2.val) })
   | ^(IS_GT e1=expr e2=expr { $val = '(\%s > \%s)' \% ($e1.val, $e2.val) })
-  | ^(SHL { $val = '(\%s << \%s)' \% ($e1.val, $e2.val) })
-  | ^(SHR { $val = '(\%s >> \%s)' \% ($e1.val, $e2.val) })
+  | ^(SHL e1=expr e2=expr { $val = '(\%s << \%s)' \% ($e1.val, $e2.val) })
+  | ^(SHR e1=expr e2=expr { $val = '(\%s >> \%s)' \% ($e1.val, $e2.val) })
   | ^(PLUS e1=expr e2=expr  { $val = '(\%s + \%s)' \% ($e1.val, $e2.val) })
   | ^(MINUS e1=expr e2=expr { $val = '(\%s - \%s)' \% ($e1.val, $e2.val) })
   | ^(DOT e1=expr e2=expr { $val = '(str(\%s) + str(\%s))' \% ($e1.val, $e2.val) })
@@ -267,13 +288,6 @@ expr returns [val]
   | KW_TRUE { $val = "True" }
   | KW_FALSE { $val = "False" }
   | ^(KW_NEW class_name actual_parameter_list?)
-  | voc=variable_or_call { $val = '\%s[0]' \% $voc.tmp }
-  | ^(Pre voc=variable_or_call incdec_op
-    {
-      self.print_line('\%s[0] = \%s[0] \%s 1' \% ($voc.tmp, 
-                        $voc.tmp, $incdec_op.op))
-      $val = '\%s[0]' \% $voc.tmp
-    })
   | ^(Post voc=variable_or_call incdec_op
     {
       $val = self.get_temp()
@@ -301,9 +315,13 @@ variable_or_call returns [tmp]
   ;
 
 actual_parameter_list returns [params_list]
-  // TODO: actually push references to parameters
-  : { params = [] } (^(Parameter expr { params.append($expr.val) }))+
+  : { params = [] } (^(Parameter ap=actual_parameter { params.append($ap.val) }))+
     { $params_list = ','.join(params) }
+  ;
+
+actual_parameter returns [val]
+  : lvalue { $val = '(\%s, True)' \% $lvalue.lval } 
+  | rvalue { $val = '(\%s, False)' \% $rvalue.val }
   ;
 
 index[vector] returns [idx]
